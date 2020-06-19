@@ -3,10 +3,12 @@ include_directories(
     )
 
 set(source_files
+    ./src/tactical_wildfire_dynamics/TWDCell.cpp
     ./src/tactical_wildfire_dynamics/TWDProblem.cpp
     )
 
 set(test_files
+    ./test/tactical_wildfire_dynamics/test_TWDCell.cpp
     ./test/tactical_wildfire_dynamics/test_TWDProblem.cpp
     )
 

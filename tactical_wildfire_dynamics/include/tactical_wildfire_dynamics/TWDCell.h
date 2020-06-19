@@ -8,7 +8,7 @@ class TWDCell {
 
         TWDCell(int x, int y);
         TWDCell(const TWDCell& cell);
-        virtual ~TWDCell();
+        ~TWDCell();
 
         TWDCell& operator=(const TWDCell& cell);
 };

@@ -10,6 +10,8 @@ TWDCell::TWDCell(const TWDCell& cell) {
     y = cell.y;
 }
 
+TWDCell::~TWDCell() = default;
+
 TWDCell& TWDCell::operator=(const TWDCell& cell) {
     if (this != &cell) {
         x = cell.x;
