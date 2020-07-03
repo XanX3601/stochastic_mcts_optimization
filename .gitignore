@@ -43,3 +43,5 @@ _deps
 *.out
 *.app
 
+.clangd/
+build/
