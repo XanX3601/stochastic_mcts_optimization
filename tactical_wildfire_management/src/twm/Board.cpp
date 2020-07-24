@@ -1,9 +1,9 @@
 #include <random>
 #include <stdexcept>
-#include <tactical_wildfire_dynamics/Board.h>
+#include <twm/Board.h>
 #include <vector>
 
-TWD::Board::Board(TWD::Problem* problem) : problem(problem) {
+twm::Board::Board(twm::Problem* problem) : problem(problem) {
     int cell_count = problem->get_cell_count();
 
     each_cell_fuel_amount = std::vector<int>(cell_count);
@@ -31,58 +31,60 @@ TWD::Board::Board(TWD::Problem* problem) : problem(problem) {
         hash_value ^= problem->get_cell_burning_random_bitstring(cell_index, is_cell_burning);
     }
 
-    each_team_cell = std::vector<TWD::Cell>(problem->get_team_count(), {0, 0});
+    each_team_cell = std::vector<twm::Cell>(problem->get_team_count(), twm::Cell::null_cell);
     for (int team_index = 0; team_index < problem->get_team_count(); ++team_index) {
-        hash_value ^= problem->get_cell_team_random_bitstring({0, 0}, team_index);
+        hash_value ^= problem->get_cell_team_random_bitstring(problem->cell_to_index(twm::Cell::null_cell), team_index);
     }
 }
 
-int TWD::Board::get_cell_fuel_amount(const TWD::Cell& cell) const {
+int twm::Board::get_cell_fuel_amount(const twm::Cell& cell) const {
     return get_cell_fuel_amount(problem->cell_to_index(cell));
 }
 
-int TWD::Board::get_cell_fuel_amount(int cell_index) const {
+int twm::Board::get_cell_fuel_amount(int cell_index) const {
     return each_cell_fuel_amount[cell_index];
 }
 
-bool TWD::Board::is_cell_burning(const TWD::Cell& cell) const {
+bool twm::Board::is_cell_burning(const twm::Cell& cell) const {
     return is_cell_burning(problem->cell_to_index(cell));
 }
 
-bool TWD::Board::is_cell_burning(int cell_index) const {
+bool twm::Board::is_cell_burning(int cell_index) const {
     return is_each_cell_burning[cell_index];
 }
 
-TWD::Cell TWD::Board::get_team_cell(int team_index) const {
+twm::Cell twm::Board::get_team_cell(int team_index) const {
     return each_team_cell[team_index];
 }
 
-int TWD::Board::get_next_team_index_to_play() const {
+int twm::Board::get_next_team_index_to_play() const {
     return next_team_index_to_play;
 }
 
-int TWD::Board::get_reward() const {
+int twm::Board::get_reward() const {
     return reward;
 }
 
-bool TWD::Board::is_action_legal(const TWD::Action& action) const {
-    return 0 <= action.cell.x && action.cell.x < problem->get_grid_width() && 0 <= action.cell.y && action.cell.y < problem->get_grid_height();
+bool twm::Board::is_action_legal(const twm::Action& action) const {
+    return (0 <= action.cell.x && action.cell.x < problem->get_grid_width() && 0 <= action.cell.y && action.cell.y < problem->get_grid_height()) || action.is_null();
 }
 
-TWD::Board TWD::Board::get_next_board(const TWD::Action& action) const {
+twm::Board twm::Board::get_next_board(const twm::Action& action) const {
     if (!(is_action_legal(action))) {
         throw std::invalid_argument("illegal action received");
     }
 
-    TWD::Board next_board(*this);
+    twm::Board next_board(*this);
 
     next_board.hash_value ^= problem->get_cell_team_random_bitstring(get_team_cell(next_team_index_to_play), next_team_index_to_play);
     next_board.hash_value ^= problem->get_cell_team_random_bitstring(action.cell, next_team_index_to_play);
     next_board.each_team_cell[next_team_index_to_play] = action.cell;
+    next_board.hash_value ^= problem->get_team_turn_random_bitstring(next_team_index_to_play);
     next_board.next_team_index_to_play++;
 
     if (next_board.get_next_team_index_to_play() == problem->get_team_count()) {
         next_board.next_team_index_to_play = 0;
+        next_board.hash_value ^= problem->get_team_turn_random_bitstring(0);
 
         std::random_device rd;
         std::mt19937 gen(rd());
@@ -90,8 +92,6 @@ TWD::Board TWD::Board::get_next_board(const TWD::Action& action) const {
 
         for (int cell_index = 0; cell_index < problem->get_cell_count(); ++cell_index) {
             if (is_cell_burning(cell_index)) {
-                next_board.reward += problem->get_cell_burning_reward(cell_index);
-
                 double rho_2 = 1;
 
                 if (get_cell_fuel_amount(cell_index) > 0) {
@@ -100,7 +100,7 @@ TWD::Board TWD::Board::get_next_board(const TWD::Action& action) const {
                     next_board.hash_value ^= problem->get_cell_fuel_random_bitstring(cell_index, cell_fuel_amount - 1);
                     next_board.each_cell_fuel_amount[cell_index] = cell_fuel_amount - 1;
 
-                    TWD::Cell cell = problem->index_to_cell(cell_index);
+                    twm::Cell cell = problem->index_to_cell(cell_index);
                     for (int team_index = 0; team_index < problem->get_team_count(); ++team_index) {
                         if (get_team_cell(team_index) == cell) {
                             rho_2 *= (1 - problem->get_probability_to_extinguish_cell(cell_index));
@@ -116,6 +116,9 @@ TWD::Board TWD::Board::get_next_board(const TWD::Action& action) const {
                     next_board.hash_value ^= problem->get_cell_burning_random_bitstring(cell_index, false);
                     next_board.is_each_cell_burning[cell_index] = false;
                     next_board.burning_cell_count--;
+                }
+                else {
+                    next_board.reward += problem->get_cell_burning_reward(cell_index);
                 }
             }
             else {
@@ -142,14 +145,25 @@ TWD::Board TWD::Board::get_next_board(const TWD::Action& action) const {
             }
         }
     }
+    else {
+        next_board.hash_value ^= problem->get_team_turn_random_bitstring(next_board.next_team_index_to_play);
+    }
 
     return next_board;
 }
 
-bool TWD::Board::is_final() const {
+bool twm::Board::is_final() const {
     return get_burning_cell_count() == 0;
 }
 
-int TWD::Board::get_burning_cell_count() const {
+int twm::Board::get_burning_cell_count() const {
     return burning_cell_count;
+}
+
+unsigned long long twm::Board::get_hash_value() const {
+    return hash_value;
+}
+
+const std::vector<twm::Action>& twm::Board::get_legal_actions() const {
+    return problem->get_legal_actions();
 }

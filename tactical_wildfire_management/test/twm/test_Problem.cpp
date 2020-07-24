@@ -1,13 +1,14 @@
 #include <catch2/catch.hpp>
-#include <tactical_wildfire_dynamics/Problem.h>
+#include <twm/Problem.h>
 #include <vector>
+#include <algorithm>
 
-SCENARIO("Tactical Widlfire Dynamics Problem") {
+SCENARIO("tactical_wildfire_management Problem") {
     GIVEN("A default 3x3 problem") {
         int grid_width = 3;
         int grid_height = 3;
 
-        TWD::Problem problem(grid_width, grid_height);
+        twm::Problem problem(grid_width, grid_height);
 
         THEN("The index of cell (1, 2) is 7") {
             REQUIRE(problem.cell_to_index({1, 2}) == 7);
@@ -42,13 +43,23 @@ SCENARIO("Tactical Widlfire Dynamics Problem") {
         THEN("The number of team must be 0") {
             REQUIRE(problem.get_team_count() == 0);
         }
+
+        THEN("All actions must be legal") {
+            auto legal_actions = problem.get_legal_actions();
+
+            for (int cell_index = 0; cell_index < problem.get_cell_count(); ++cell_index) {
+                REQUIRE(std::find(legal_actions.begin(), legal_actions.end(), twm::Action(problem.index_to_cell(cell_index))) != legal_actions.end());
+            }
+
+            REQUIRE(std::find(legal_actions.begin(), legal_actions.end(), twm::Action::null_action) != legal_actions.end());
+        }
     }
 
     GIVEN("A default 3x4 problem") {
         int grid_width = 3;
         int grid_height = 4;
 
-        TWD::Problem problem(grid_width, grid_height);
+        twm::Problem problem(grid_width, grid_height);
 
         THEN("The grid width must be 3") {
             REQUIRE(problem.get_grid_width() == 3);
@@ -85,16 +96,16 @@ SCENARIO("Tactical Widlfire Dynamics Problem") {
         std::vector<int> each_cell_burning_reward = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
         int team_count = 4;
 
-        TWD::Problem problem(grid_width, grid_height, each_cell_initial_fuel_amount, is_each_cell_initially_burning, neighbors_ignition_probability, each_cell_extinguishment_probability, each_cell_burning_reward, team_count);
+        twm::Problem problem(grid_width, grid_height, each_cell_initial_fuel_amount, is_each_cell_initially_burning, neighbors_ignition_probability, each_cell_extinguishment_probability, each_cell_burning_reward, team_count);
 
         THEN("The probabilities of ignition must be 0.5 between neighbors, 1 for the same cell and 0 otherwise") {
             for (int x = 0; x < grid_width; ++x) {
                 for (int y = 0; y < grid_height; ++y) {
-                    TWD::Cell cell(x, y);
+                    twm::Cell cell(x, y);
 
                     for (int other_x = 0; other_x < grid_width; ++other_x) {
                         for (int other_y = 0; other_y < grid_height; ++other_y) {
-                            TWD::Cell other_cell(other_x, other_y);
+                            twm::Cell other_cell(other_x, other_y);
 
                             double required_probability = 0;
 
