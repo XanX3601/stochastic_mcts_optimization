@@ -20,7 +20,6 @@ class mca::twm::TranspositionTable
         void insert(unsigned long long hash_value);
         mca::twm::TranspositionEntry& get_entry(unsigned long long hash_value);
         int get_number_of_entries() const;
-        std::iterator_traits<
 };
 
 #endif /* MCA_TWM_TRANSPOSITION_TABLE_H */

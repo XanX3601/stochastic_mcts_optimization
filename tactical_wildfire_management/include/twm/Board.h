@@ -38,6 +38,8 @@ class twm::Board
         int get_burning_cell_count() const;
         unsigned long long get_hash_value() const;
         const std::vector<twm::Action>& get_legal_actions() const;
+        void reset_reward();
+        void scale_fuel_amount(double scale);
 };
 
 #endif /* TWM_BOARD_H */

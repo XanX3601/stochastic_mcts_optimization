@@ -167,3 +167,21 @@ unsigned long long twm::Board::get_hash_value() const {
 const std::vector<twm::Action>& twm::Board::get_legal_actions() const {
     return problem->get_legal_actions();
 }
+
+void twm::Board::reset_reward() {
+    reward = 0;
+
+    for (int cell_index = 0; cell_index < problem->get_cell_count(); ++cell_index) {
+        if (is_cell_burning(cell_index)) {
+            reward += problem->get_cell_burning_reward(cell_index);
+        }
+    }
+}
+
+void twm::Board::scale_fuel_amount(double scale) {
+    for (int cell_index = 0; cell_index < problem->get_cell_count(); ++cell_index) {
+        each_cell_fuel_amount[cell_index] *= scale;
+    }
+}
+
+

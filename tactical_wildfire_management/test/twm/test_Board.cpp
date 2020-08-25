@@ -207,5 +207,24 @@ SCENARIO("tactical_wildfire_management Board") {
             REQUIRE(board.get_burning_cell_count() == expected_burning_cell_count[turn_count]);
             REQUIRE(board.get_hash_value() == expected_hash_value[turn_count]);
         }
+
+        THEN("When playing null action at first and second turn then reseting the reward, it should equal -8") {
+            board = board.get_next_board(twm::Action::null_action)
+                .get_next_board(twm::Action::null_action)
+                .get_next_board(twm::Action::null_action)
+                .get_next_board(twm::Action::null_action);
+
+            board.reset_reward();
+
+            REQUIRE(board.get_reward() == -8);
+        }
+
+        THEN("When scaling fuel amount by 0.5, it should be half the initial amount") {
+            board.scale_fuel_amount(.5);
+
+            for (int cell_index = 0; cell_index < problem.get_cell_count(); ++cell_index) {
+                REQUIRE(board.get_cell_fuel_amount(cell_index) == expected_fuel_amount[0][cell_index] / 2);
+            }
+        }
     }
 }
