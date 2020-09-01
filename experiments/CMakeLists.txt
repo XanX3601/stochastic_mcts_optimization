@@ -1,5 +1,6 @@
 set(source_files
     ./src/experiments/grid.cpp
+    ./src/experiments/experiments.cpp
     )
 
 set(test_files

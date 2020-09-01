@@ -6,7 +6,7 @@ twm::Problem generate_problem_1(int grid_size, int team_count) {
     int grid_width = grid_size;
     int grid_height = grid_size;
 
-    double neighbors_ignition_probability = 0.06;
+    double neighbors_ignition_probability = NEIGHBORS_IGNITION_PROBABILITY_GRID_1;
 
     std::vector<int> each_cell_initial_fuel_amount(grid_size * grid_size, std::floor(grid_size / (2 * neighbors_ignition_probability)));
     std::vector<bool> is_each_cell_initially_burning(grid_size * grid_size, false);
@@ -27,4 +27,14 @@ twm::Problem generate_problem_1(int grid_size, int team_count) {
     each_cell_burning_reward[grid_size - 1] = -10;
 
     return twm::Problem(grid_width, grid_height, each_cell_initial_fuel_amount, is_each_cell_initially_burning, neighbors_ignition_probability, each_cell_extinguishment_probability, each_cell_burning_reward, team_count);
+}
+
+twm::Board generate_grid_1(twm::Problem* problem) {
+    twm::Board board(problem);
+
+    twm::Cell bottom_left_corner(0, problem->grid_height() - 1);
+
+    int number_of_free_turn = problem->get_cell_initial_fuel_amount(bottom_left_corner);
+
+
 }
