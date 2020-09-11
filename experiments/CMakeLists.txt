@@ -1,10 +1,12 @@
 set(source_files
-    ./src/experiments/grid.cpp
-    ./src/experiments/experiments.cpp
+    ./src/experiments/twm/grid.cpp
+    ./src/experiments/twm/experiments.cpp
+    ./src/experiments/twm/ExperimentResult.cpp
     )
 
 set(test_files
-    ./test/experiments/test_grid.cpp
+    ./test/experiments/twm/test_grid.cpp
+    ./test/experiments/twm/test_ExperimentResult.cpp
     )
 
 add_executable(experiments
@@ -30,4 +32,5 @@ target_include_directories(test_experiments PUBLIC ./include)
 target_link_libraries(test_experiments Catch2::Catch2)
 target_link_libraries(test_experiments tactical_wildfire_management)
 target_link_libraries(test_experiments monte_carlo_algorithm)
+target_link_libraries(test_experiments spdlog)
 

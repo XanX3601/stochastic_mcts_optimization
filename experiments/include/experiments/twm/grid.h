@@ -4,6 +4,8 @@
 #include <twm/Problem.h>
 #include <twm/Board.h>
 
+const double NEIGHBORS_IGNITION_PROBABILITY_GRID_1 = .06;
+
 ::twm::Problem generate_problem_1(int grid_size, int team_count);
 ::twm::Board generate_grid_1(twm::Problem* problem);
 

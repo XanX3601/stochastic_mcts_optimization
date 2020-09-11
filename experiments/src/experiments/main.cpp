@@ -1,13 +1,14 @@
+#include <experiments/twm/experiments.h>
+
 #include <cxxopts.hpp>
 #include <iostream>
 
 int main(int argc, const char** argv) {
-    cxxopts::Options options("experiments", "Experiments launcher for stochastic mcts optimization");
+    cxxopts::Options options(
+        "experiments", "Experiments launcher for stochastic mcts optimization");
 
-    options.add_options()
-        ("b,bar", "Param bar", cxxopts::value<std::string>())
-        ("h,help", "Print help")
-    ;
+    options.add_options()("b,bar", "Param bar", cxxopts::value<std::string>())(
+        "h,help", "Print help");
 
     auto result = options.parse(argc, argv);
 
@@ -15,4 +16,6 @@ int main(int argc, const char** argv) {
         std::cout << options.help() << std::endl;
         exit(0);
     }
+
+    experiment_uct_problem_1(8, 4, .5, 1);
 }
