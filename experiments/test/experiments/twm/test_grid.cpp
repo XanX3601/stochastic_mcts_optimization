@@ -7,7 +7,7 @@
 
 SCENARIO("experiments grid") {
     WHEN("Generating problem 1") {
-        twm::Problem problem = generate_problem_1(8, 4);
+        twm::Problem problem = experiments::twm::generate_problem_1(8, 4);
 
         THEN("The resulting problem must correspond to what is expected") {
             REQUIRE(problem.get_grid_width() == 8);
@@ -64,7 +64,7 @@ SCENARIO("experiments grid") {
         }
 
         THEN("Grid 1 can be generated from the problem") {
-            twm::Board board = generate_grid_1(&problem);
+            twm::Board board = experiments::twm::generate_grid_1(&problem);
 
             twm::Cell bottom_left_corner(0, problem.get_grid_height() - 1);
 

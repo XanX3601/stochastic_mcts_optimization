@@ -3,7 +3,8 @@
 #include <cmath>
 #include <vector>
 
-twm::Problem generate_problem_1(int grid_size, int team_count) {
+::twm::Problem* experiments::twm::generate_problem_1(int grid_size,
+                                                     int team_count) {
     int grid_width = grid_size;
     int grid_height = grid_size;
 
@@ -34,29 +35,29 @@ twm::Problem generate_problem_1(int grid_size, int team_count) {
     }
     each_cell_burning_reward[grid_size - 1] = -10;
 
-    return twm::Problem(grid_width, grid_height, each_cell_initial_fuel_amount,
-                        is_each_cell_initially_burning,
-                        neighbors_ignition_probability,
-                        each_cell_extinguishment_probability,
-                        each_cell_burning_reward, team_count);
+    return new ::twm::Problem(
+        grid_width, grid_height, each_cell_initial_fuel_amount,
+        is_each_cell_initially_burning, neighbors_ignition_probability,
+        each_cell_extinguishment_probability, each_cell_burning_reward,
+        team_count);
 }
 
-twm::Board generate_grid_1(twm::Problem* problem) {
-    twm::Board board(problem);
+::twm::Board* experiments::twm::generate_grid_1(::twm::Problem* problem) {
+    ::twm::Board board(problem);
 
-    twm::Cell bottom_left_corner(0, problem->get_grid_height() - 1);
+    ::twm::Cell bottom_left_corner(0, problem->get_grid_height() - 1);
 
     int number_of_free_turn =
         problem->get_cell_initial_fuel_amount(bottom_left_corner);
 
     for (int turn_index = 0; turn_index < number_of_free_turn; ++turn_index) {
         for (int team_id = 0; team_id < problem->get_team_count(); ++team_id) {
-            board = board.get_next_board(twm::Action::null_action);
+            board = board.get_next_board(::twm::Action::null_action);
         }
     }
 
     board.reset_reward();
     board.scale_fuel_amount(std::pow(problem->get_grid_width(), -.25));
 
-    return board;
+    return new ::twm::Board(board);
 }

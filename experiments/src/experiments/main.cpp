@@ -1,3 +1,4 @@
+#include <experiments/twm/ExperimentResult.h>
 #include <experiments/twm/experiments.h>
 
 #include <cxxopts.hpp>
@@ -17,5 +18,6 @@ int main(int argc, const char** argv) {
         exit(0);
     }
 
-    experiment_uct_problem_1(8, 4, .5, 1);
+    experiments::twm::ExperimentResult r(NULL, NULL);
+    r.save_to_file("test.txt");
 }

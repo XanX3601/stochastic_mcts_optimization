@@ -8,18 +8,18 @@
 
 #include <chrono>
 
-void experiment_uct_problem_1(int grid_size, int team_count, double c,
-                              int search_time) {
+::experiments::twm::ExperimentResult experiments::twm::experiment_uct_problem_1(
+    int grid_size, int team_count, double c, int search_time) {
     spdlog::info("Starting experiment uct problem 1");
 
     // generate problem
-    twm::Problem problem = generate_problem_1(grid_size, team_count);
-    twm::Board board = generate_grid_1(&problem);
+    ::twm::Problem* problem = generate_problem_1(grid_size, team_count);
+    ::twm::Board* board = generate_grid_1(problem);
 
     // play until game is over
-    while (!(board.is_final())) {
+    while (!(board->is_final())) {
         // search for action using uct
-        mca::twm::UCT uct(board, c);
+        mca::twm::UCT uct(*board, c);
 
         auto start = std::chrono::steady_clock::now();
         auto now = std::chrono::steady_clock::now();
@@ -43,7 +43,7 @@ void experiment_uct_problem_1(int grid_size, int team_count, double c,
         auto legal_actions = board.get_legal_actions();
 
         int max_number_of_playout = 0;
-        twm::Action most_played_action = twm::Action::null_action;
+        ::twm::Action most_played_action = ::twm::Action::null_action;
 
         for (auto action : legal_actions) {
             if (entry.does_contain(action)) {

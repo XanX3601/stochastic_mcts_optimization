@@ -20,6 +20,7 @@ target_link_libraries(experiments tactical_wildfire_management)
 target_link_libraries(experiments monte_carlo_algorithm)
 target_link_libraries(experiments spdlog)
 target_link_libraries(experiments cxxopts)
+target_link_libraries(experiments fmt)
 
 add_executable(test_experiments
     ./test/main.cpp
@@ -33,4 +34,5 @@ target_link_libraries(test_experiments Catch2::Catch2)
 target_link_libraries(test_experiments tactical_wildfire_management)
 target_link_libraries(test_experiments monte_carlo_algorithm)
 target_link_libraries(test_experiments spdlog)
+target_link_libraries(test_experiments fmt)
 
