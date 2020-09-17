@@ -19,7 +19,7 @@ target_include_directories(experiments PUBLIC ./include)
 target_link_libraries(experiments tactical_wildfire_management)
 target_link_libraries(experiments monte_carlo_algorithm)
 target_link_libraries(experiments spdlog)
-target_link_libraries(experiments cxxopts)
+target_link_libraries(experiments CLI11::CLI11)
 target_link_libraries(experiments fmt)
 
 add_executable(test_experiments

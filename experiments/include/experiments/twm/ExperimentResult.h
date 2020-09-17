@@ -14,7 +14,8 @@ class ExperimentResult {
    private:
     ::twm::Problem* problem;
     ::twm::Board* root_board;
-    std::unordered_map<std::string, std::string> results_name_to_value;
+    std::vector<std::string> each_result_name;
+    std::vector<std::string> each_result_value;
 
    public:
     ExperimentResult(::twm::Problem* problem, ::twm::Board* root_board);
