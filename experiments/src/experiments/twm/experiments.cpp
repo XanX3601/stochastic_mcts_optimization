@@ -9,8 +9,10 @@
 #include <chrono>
 #include <random>
 
-::experiments::twm::ExperimentResult experiments::twm::experiment_uct_problem_1(
-    int grid_size, int team_count, double c, int search_time) {
+::experiments::twm::ExperimentResult experiments::twm::experiment_uct_problem_1(int grid_size,
+                                                                                int team_count,
+                                                                                double c,
+                                                                                int search_time) {
     auto start_experiment = std::chrono::steady_clock::now();
 
     spdlog::info("{} {} {} start", EXPERIMENT_TAG, UCT_TAG, PROBLEM_1_TAG);
@@ -30,6 +32,8 @@
     results.add_result("team count", std::to_string(team_count));
     results.add_result("c", std::to_string(c));
     results.add_result("search time (in seconds)", std::to_string(search_time));
+    results.add_result("lowest reward", std::to_string(root_board->lowest_possible_reward()));
+    results.add_result("highest reward", std::to_string(root_board->highest_possible_reward()));
 
     int action_count = 0;
     int uct_search_count = 0;
@@ -66,8 +70,7 @@
 
         for (auto action : legal_actions) {
             if (entry.does_contain(action)) {
-                int number_of_playout =
-                    entry.get_action_number_of_playout(action);
+                int number_of_playout = entry.get_action_number_of_playout(action);
 
                 if (number_of_playout > max_number_of_playout) {
                     max_number_of_playout = number_of_playout;
@@ -78,8 +81,8 @@
 
         // apply action to board
         board = board.get_next_board(most_played_action);
-        spdlog::info("{} {} {} played action {}", EXPERIMENT_TAG, UCT_TAG,
-                     PROBLEM_1_TAG, action_count);
+        spdlog::info("{} {} {} played action {}", EXPERIMENT_TAG, UCT_TAG, PROBLEM_1_TAG,
+                     action_count);
         action_count++;
     }
 
@@ -88,15 +91,12 @@
     auto now = std::chrono::steady_clock::now();
 
     std::chrono::duration<double> experiment_duration = now - start_experiment;
-    results.add_result("experiment time (in seconds)",
-                       std::to_string(experiment_duration.count()));
+    results.add_result("experiment time (in seconds)", std::to_string(experiment_duration.count()));
 
     results.add_result("number of action played", std::to_string(action_count));
-    results.add_result(
-        "number of action played by team",
-        std::to_string(action_count / problem->get_team_count()));
-    results.add_result("number of uct search",
-                       std::to_string(uct_search_count));
+    results.add_result("number of action played by team",
+                       std::to_string(action_count / problem->get_team_count()));
+    results.add_result("number of uct search", std::to_string(uct_search_count));
     results.add_result("mean number of uct search",
                        std::to_string(uct_search_count / action_count));
     results.add_result("final reward", std::to_string(board.get_reward()));
@@ -104,8 +104,8 @@
     return results;
 }
 
-::experiments::twm::ExperimentResult
-experiments::twm::experiment_random_problem_1(int grid_size, int team_count) {
+::experiments::twm::ExperimentResult experiments::twm::experiment_random_problem_1(int grid_size,
+                                                                                   int team_count) {
     auto start_experiment = std::chrono::steady_clock::now();
 
     spdlog::info("{} {} {} start", EXPERIMENT_TAG, RANDOM_TAG, PROBLEM_1_TAG);
@@ -123,6 +123,8 @@ experiments::twm::experiment_random_problem_1(int grid_size, int team_count) {
     results.add_result("algorithm", "random");
     results.add_result("grid size", std::to_string(grid_size));
     results.add_result("team count", std::to_string(team_count));
+    results.add_result("lowest reward", std::to_string(root_board->lowest_possible_reward()));
+    results.add_result("highest reward", std::to_string(root_board->highest_possible_reward()));
 
     int action_count = 0;
 
@@ -135,13 +137,12 @@ experiments::twm::experiment_random_problem_1(int grid_size, int team_count) {
         auto legal_actions = board.get_legal_actions();
 
         // choose uniformely an action among legal ones
-        std::uniform_int_distribution<> distribution(0,
-                                                     legal_actions.size() - 1);
+        std::uniform_int_distribution<> distribution(0, legal_actions.size() - 1);
 
         // apply action to board
         board = board.get_next_board(legal_actions[distribution(generator)]);
-        spdlog::info("{} {} {} played action {}", EXPERIMENT_TAG, RANDOM_TAG,
-                     PROBLEM_1_TAG, action_count);
+        spdlog::info("{} {} {} played action {}", EXPERIMENT_TAG, RANDOM_TAG, PROBLEM_1_TAG,
+                     action_count);
         action_count++;
     }
 
@@ -150,13 +151,11 @@ experiments::twm::experiment_random_problem_1(int grid_size, int team_count) {
     auto now = std::chrono::steady_clock::now();
 
     std::chrono::duration<double> experiment_duration = now - start_experiment;
-    results.add_result("experiment time (in seconds)",
-                       std::to_string(experiment_duration.count()));
+    results.add_result("experiment time (in seconds)", std::to_string(experiment_duration.count()));
 
     results.add_result("number of action played", std::to_string(action_count));
-    results.add_result(
-        "number of action played by team",
-        std::to_string(action_count / problem->get_team_count()));
+    results.add_result("number of action played by team",
+                       std::to_string(action_count / problem->get_team_count()));
     results.add_result("final reward", std::to_string(board.get_reward()));
 
     return results;

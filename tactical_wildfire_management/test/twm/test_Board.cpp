@@ -1,8 +1,9 @@
-#include <catch2/catch.hpp>
-#include <twm/Board.h>
 #include <twm/Action.h>
-#include <vector>
+#include <twm/Board.h>
+
+#include <catch2/catch.hpp>
 #include <unordered_map>
+#include <vector>
 
 SCENARIO("tactical_wildfire_management Board") {
     WHEN("Considering a simple problem and its default board") {
@@ -10,13 +11,18 @@ SCENARIO("tactical_wildfire_management Board") {
         int grid_height = 4;
 
         std::vector<int> each_cell_initial_fuel_amount = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-        std::vector<bool> is_each_cell_initially_burning = {false, false, false, false, true, false, false, false, false, false, false, false};
+        std::vector<bool> is_each_cell_initially_burning = {
+            false, false, false, false, true, false, false, false, false, false, false, false};
         double neighbors_ignition_probability = .06;
         std::vector<double> each_cell_extinguishment_probability(grid_width * grid_height, .8);
-        std::vector<int> each_cell_burning_reward = {0, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11};
+        std::vector<int> each_cell_burning_reward = {0,  -1, -2, -3, -4,  -5,
+                                                     -6, -7, -8, -9, -10, -11};
         int team_count = 4;
 
-        twm::Problem problem(grid_width, grid_height, each_cell_initial_fuel_amount, is_each_cell_initially_burning, neighbors_ignition_probability, each_cell_extinguishment_probability, each_cell_burning_reward, team_count);
+        twm::Problem problem(grid_width, grid_height, each_cell_initial_fuel_amount,
+                             is_each_cell_initially_burning, neighbors_ignition_probability,
+                             each_cell_extinguishment_probability, each_cell_burning_reward,
+                             team_count);
 
         twm::Board board(&problem);
 
@@ -26,8 +32,7 @@ SCENARIO("tactical_wildfire_management Board") {
 
                 if (cell_index == 4) {
                     REQUIRE(board.is_cell_burning(cell_index));
-                }
-                else {
+                } else {
                     REQUIRE_FALSE(board.is_cell_burning(cell_index));
                 }
             }
@@ -54,7 +59,10 @@ SCENARIO("tactical_wildfire_management Board") {
         std::vector<int> each_cell_burning_reward = {0, -1, -2, -1, -2, -3, -2, -3, -4};
         int team_count = 2;
 
-        twm::Problem problem(grid_width, grid_height, each_cell_initial_fuel_amount, is_each_cell_initially_burning, neighbors_ignition_probability, each_cell_extinguishment_probability, each_cell_burning_reward, team_count);
+        twm::Problem problem(grid_width, grid_height, each_cell_initial_fuel_amount,
+                             is_each_cell_initially_burning, neighbors_ignition_probability,
+                             each_cell_extinguishment_probability, each_cell_burning_reward,
+                             team_count);
 
         twm::Board board(&problem);
 
@@ -75,39 +83,30 @@ SCENARIO("tactical_wildfire_management Board") {
         };
 
         std::unordered_map<int, int> expected_reward = {
-            {0, 0},
-            {1, -2},
-            {2, -10},
-            {3, -24},
-            {4, -42},
+            {0, 0}, {1, -2}, {2, -10}, {3, -24}, {4, -42},
         };
 
         std::unordered_map<int, bool> expected_final = {
-            {0, false},
-            {1, false},
-            {2, false},
-            {3, false},
-            {4, false},
+            {0, false}, {1, false}, {2, false}, {3, false}, {4, false},
         };
 
         std::unordered_map<int, int> expected_burning_cell_count = {
-            {0, 1},
-            {1, 3},
-            {2, 6},
-            {3, 8},
-            {4, 9},
+            {0, 1}, {1, 3}, {2, 6}, {3, 8}, {4, 9},
         };
 
         std::unordered_map<int, unsigned long long> expected_hash_value;
         unsigned long long hash_value = 0;
 
         for (int cell_index = 0; cell_index < problem.get_cell_count(); ++cell_index) {
-            hash_value ^= problem.get_cell_fuel_random_bitstring(cell_index, problem.get_cell_initial_fuel_amount(cell_index));
-            hash_value ^= problem.get_cell_burning_random_bitstring(cell_index, problem.is_cell_initially_burning(cell_index));
+            hash_value ^= problem.get_cell_fuel_random_bitstring(
+                cell_index, problem.get_cell_initial_fuel_amount(cell_index));
+            hash_value ^= problem.get_cell_burning_random_bitstring(
+                cell_index, problem.is_cell_initially_burning(cell_index));
         }
 
         for (int team_index = 0; team_index < problem.get_team_count(); ++team_index) {
-            hash_value ^= problem.get_cell_team_random_bitstring(problem.cell_to_index(twm::Cell::null_cell), team_index);
+            hash_value ^= problem.get_cell_team_random_bitstring(
+                problem.cell_to_index(twm::Cell::null_cell), team_index);
         }
 
         hash_value ^= problem.get_team_turn_random_bitstring(1);
@@ -183,12 +182,14 @@ SCENARIO("tactical_wildfire_management Board") {
         int turn_count = 0;
 
         THEN("When playing null action, the grid should be entirely burning in 5 turn") {
-            while(turn_count < 4) {
+            while (turn_count < 4) {
                 board = board.get_next_board(twm::Action::null_action);
 
                 for (int cell_index = 0; cell_index < problem.get_cell_count(); ++cell_index) {
-                    REQUIRE(board.get_cell_fuel_amount(cell_index) == expected_fuel_amount[turn_count][cell_index]);
-                    REQUIRE(board.is_cell_burning(cell_index) == expected_burning_cell[turn_count][cell_index]);
+                    REQUIRE(board.get_cell_fuel_amount(cell_index) ==
+                            expected_fuel_amount[turn_count][cell_index]);
+                    REQUIRE(board.is_cell_burning(cell_index) ==
+                            expected_burning_cell[turn_count][cell_index]);
                 }
                 REQUIRE(board.get_reward() == expected_reward[turn_count]);
                 REQUIRE(board.is_final() == expected_final[turn_count]);
@@ -199,8 +200,10 @@ SCENARIO("tactical_wildfire_management Board") {
                 turn_count++;
             }
             for (int cell_index = 0; cell_index < problem.get_cell_count(); ++cell_index) {
-                REQUIRE(board.get_cell_fuel_amount(cell_index) == expected_fuel_amount[turn_count][cell_index]);
-                REQUIRE(board.is_cell_burning(cell_index) == expected_burning_cell[turn_count][cell_index]);
+                REQUIRE(board.get_cell_fuel_amount(cell_index) ==
+                        expected_fuel_amount[turn_count][cell_index]);
+                REQUIRE(board.is_cell_burning(cell_index) ==
+                        expected_burning_cell[turn_count][cell_index]);
             }
             REQUIRE(board.get_reward() == expected_reward[turn_count]);
             REQUIRE(board.is_final() == expected_final[turn_count]);
@@ -208,11 +211,13 @@ SCENARIO("tactical_wildfire_management Board") {
             REQUIRE(board.get_hash_value() == expected_hash_value[turn_count]);
         }
 
-        THEN("When playing null action at first and second turn then reseting the reward, it should equal -8") {
+        THEN(
+            "When playing null action at first and second turn then reseting the reward, it should "
+            "equal -8") {
             board = board.get_next_board(twm::Action::null_action)
-                .get_next_board(twm::Action::null_action)
-                .get_next_board(twm::Action::null_action)
-                .get_next_board(twm::Action::null_action);
+                        .get_next_board(twm::Action::null_action)
+                        .get_next_board(twm::Action::null_action)
+                        .get_next_board(twm::Action::null_action);
 
             board.reset_reward();
 
@@ -223,8 +228,38 @@ SCENARIO("tactical_wildfire_management Board") {
             board.scale_fuel_amount(.5);
 
             for (int cell_index = 0; cell_index < problem.get_cell_count(); ++cell_index) {
-                REQUIRE(board.get_cell_fuel_amount(cell_index) == expected_fuel_amount[0][cell_index] / 2);
+                REQUIRE(board.get_cell_fuel_amount(cell_index) ==
+                        expected_fuel_amount[0][cell_index] / 2);
             }
+        }
+    }
+
+    WHEN("Considering a simple 3x3 problem") {
+        int grid_width = 3;
+        int grid_height = 3;
+        std::vector<int> each_cell_initial_fuel_amount = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        std::vector<bool> is_each_cell_initially_burning(9, false);
+        is_each_cell_initially_burning[0] = true;
+        is_each_cell_initially_burning[1] = true;
+        is_each_cell_initially_burning[2] = true;
+        double neighbors_ignition_probability = .5;
+        std::vector<double> each_cell_ignition_probabilities(9, .5);
+        std::vector<int> each_cell_burning_reward = {-1, -2, -3, -4, -5, -6, -7, -8, -9};
+        int team_count = 2;
+
+        ::twm::Problem problem(grid_width, grid_height, each_cell_initial_fuel_amount,
+                               is_each_cell_initially_burning, neighbors_ignition_probability,
+                               each_cell_ignition_probabilities, each_cell_burning_reward,
+                               team_count);
+
+        ::twm::Board board(&problem);
+
+        THEN("The lowest possible reward is -285") {
+            REQUIRE(board.lowest_possible_reward() == -291);
+        }
+
+        THEN("The highest possible reward is -1") {
+            REQUIRE(board.highest_possible_reward() == -7);
         }
     }
 }
