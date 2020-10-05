@@ -50,7 +50,7 @@
         mca::twm::TranspositionTable transposition_table;
 
         while (elapsed_seconds.count() < search_time) {
-            mca::twm::search(board, transposition_table, c);
+            mca::twm::uct(board, transposition_table, c);
             uct_search_count++;
 
             now = std::chrono::steady_clock::now();

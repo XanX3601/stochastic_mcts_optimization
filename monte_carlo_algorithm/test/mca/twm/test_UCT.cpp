@@ -28,7 +28,7 @@ SCENARIO("monte_carlo_algorithm twm UCT") {
         mca::twm::TranspositionTable transposition_table;
 
         for (int i = 0; i < 50; ++i) {
-            mca::twm::search(root_board, transposition_table, 50);
+            mca::twm::uct(root_board, transposition_table, 50);
         }
     }
 }

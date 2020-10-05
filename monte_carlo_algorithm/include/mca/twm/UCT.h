@@ -8,9 +8,8 @@
 
 namespace mca {
 namespace twm {
-int search(const ::twm::Board& board, ::mca::twm::TranspositionTable& transposition_table,
-           double c);
-int playout(const ::twm::Board& board);
+int uct(const ::twm::Board& board, ::mca::twm::TranspositionTable& transposition_table, double c);
+int uct_playout(const ::twm::Board& board);
 }  // namespace twm
 }  // namespace mca
 
