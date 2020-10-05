@@ -37,27 +37,25 @@
 
     int action_count = 0;
     int uct_search_count = 0;
+    int next_hash_value_count = 0;
 
     // play until game is over
     while (!(board.is_final())) {
         // search for action using uct
-        mca::twm::UCT uct(board, c);
-
         auto start = std::chrono::steady_clock::now();
         auto now = std::chrono::steady_clock::now();
 
         std::chrono::duration<double> elapsed_seconds = now - start;
 
+        mca::twm::TranspositionTable transposition_table;
+
         while (elapsed_seconds.count() < search_time) {
-            uct.search();
+            mca::twm::search(board, transposition_table, c);
             uct_search_count++;
 
             now = std::chrono::steady_clock::now();
             elapsed_seconds = now - start;
         }
-
-        // retrieve best action for each team
-        auto transposition_table = uct.get_transposition_table();
 
         // retrieve entry
         auto entry = transposition_table.get_entry(board.get_hash_value());
@@ -81,6 +79,7 @@
 
         // apply action to board
         board = board.get_next_board(most_played_action);
+        next_hash_value_count += entry.get_action_number_of_unique_hash_value(most_played_action);
         spdlog::info("{} {} {} played action {}", EXPERIMENT_TAG, UCT_TAG, PROBLEM_1_TAG,
                      action_count);
         action_count++;
@@ -99,6 +98,9 @@
     results.add_result("number of uct search", std::to_string(uct_search_count));
     results.add_result("mean number of uct search",
                        std::to_string(uct_search_count / action_count));
+    results.add_result("number of unique next hash value", std::to_string(next_hash_value_count));
+    results.add_result("mean number of unique next hash value",
+                       std::to_string(next_hash_value_count / action_count));
     results.add_result("final reward", std::to_string(board.get_reward()));
 
     return results;

@@ -1,12 +1,14 @@
-#include "mca/twm/TranspositionEntry.h"
-#include "twm/Board.h"
+#include <mca/twm/UCT.h>
+
 #include <cmath>
 #include <limits>
-#include <mca/twm/UCT.h>
 #include <random>
 #include <vector>
 
-int mca::twm::UCT::playout(const ::twm::Board& board) {
+#include "mca/twm/TranspositionEntry.h"
+#include "twm/Board.h"
+
+int mca::twm::playout(const ::twm::Board& board) {
     if (board.is_final()) {
         return board.get_reward();
     }
@@ -26,14 +28,8 @@ int mca::twm::UCT::playout(const ::twm::Board& board) {
     return next_board.get_reward();
 }
 
-mca::twm::UCT::UCT(::twm::Board board, double c): root_board(board), c(c) {
-}
-
-void mca::twm::UCT::search() {
-    search(root_board);
-}
-
-int mca::twm::UCT::search(const ::twm::Board& board) {
+int mca::twm::search(const ::twm::Board& board, ::mca::twm::TranspositionTable& transposition_table,
+                     double c) {
     if (board.is_final()) {
         return board.get_reward();
     }
@@ -54,13 +50,15 @@ int mca::twm::UCT::search(const ::twm::Board& board) {
             double value;
 
             if (transposition_entry.does_contain(action)) {
-                int action_accumulated_reward = transposition_entry.get_action_accumulated_reward(action);
-                int action_number_of_playout = transposition_entry.get_action_number_of_playout(action);
+                int action_accumulated_reward =
+                    transposition_entry.get_action_accumulated_reward(action);
+                int action_number_of_playout =
+                    transposition_entry.get_action_number_of_playout(action);
 
-                value = (action_accumulated_reward / action_number_of_playout) + c * std::sqrt(std::log(number_of_playout) / action_number_of_playout);
-            }
-            else {
-                value = best_value + 1;
+                value = (action_accumulated_reward / action_number_of_playout) +
+                        c * std::sqrt(std::log(number_of_playout) / action_number_of_playout);
+            } else {
+                value = std::numeric_limits<double>::max();
             }
 
             if (value > best_value) {
@@ -70,12 +68,12 @@ int mca::twm::UCT::search(const ::twm::Board& board) {
         }
 
         auto next_board = board.get_next_board(legal_actions[chosen_action_index]);
-        int reward = search(next_board);
-        transposition_entry.update(legal_actions[chosen_action_index], reward);
+        int reward = search(next_board, transposition_table, c);
+        transposition_entry.update(legal_actions[chosen_action_index], reward,
+                                   next_board.get_hash_value());
 
         return reward;
-    }
-    else {
+    } else {
         transposition_table.insert(board.get_hash_value());
 
         std::random_device random_device;
@@ -84,14 +82,12 @@ int mca::twm::UCT::search(const ::twm::Board& board) {
 
         int random_action_index = distribution(generator);
 
-        int reward = playout(board.get_next_board(legal_actions[random_action_index]));
+        auto next_board = board.get_next_board(legal_actions[random_action_index]);
+        int reward = playout(next_board);
 
-        transposition_table.get_entry(board.get_hash_value()).update(legal_actions[random_action_index], reward);
+        transposition_table.get_entry(board.get_hash_value())
+            .update(legal_actions[random_action_index], reward, next_board.get_hash_value());
 
         return reward;
     }
-}
-
-::mca::twm::TranspositionTable& ::mca::twm::UCT::get_transposition_table() {
-    return transposition_table;
 }

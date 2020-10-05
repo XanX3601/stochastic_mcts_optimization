@@ -25,23 +25,21 @@ int main(int argc, const char** argv) {
     app.add_option("--team-count", team_count, "the number of team", true);
 
     std::string result_file = "result";
-    app.add_option("--result-file", result_file,
-                   "the file in which write the result experiment", true);
+    app.add_option("--result-file", result_file, "the file in which write the result experiment",
+                   true);
 
-    CLI::App* uct_app =
-        app.add_subcommand("uct", "Experiment using the UCT algorithm");
+    CLI::App* uct_app = app.add_subcommand("uct", "Experiment using the UCT algorithm");
 
     double c = .5;
     uct_app->add_option("-c", c, "hyper parameter c", true);
 
     int search_time = 60;
-    uct_app->add_option("--search-time", search_time,
-                        "search time per iteration in seconds", true);
+    uct_app->add_option("--search-time", search_time, "search time per iteration in seconds", true);
 
     uct_app->callback([&]() {
         if (problem == problem1) {
-            auto result = experiments::twm::experiment_uct_problem_1(
-                grid_size, team_count, c, search_time);
+            auto result =
+                experiments::twm::experiment_uct_problem_1(grid_size, team_count, c, search_time);
             result.save_to_file(result_file);
             result.close_experiment();
         } else {
@@ -49,13 +47,11 @@ int main(int argc, const char** argv) {
         }
     });
 
-    CLI::App* random_app =
-        app.add_subcommand("random", "Experiment using the random algorithm");
+    CLI::App* random_app = app.add_subcommand("random", "Experiment using the random algorithm");
 
     random_app->callback([&]() {
         if (problem == problem1) {
-            auto result = experiments::twm::experiment_random_problem_1(
-                grid_size, team_count);
+            auto result = experiments::twm::experiment_random_problem_1(grid_size, team_count);
             result.save_to_file(result_file);
             result.close_experiment();
         } else {

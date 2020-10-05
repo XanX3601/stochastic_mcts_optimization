@@ -1,5 +1,6 @@
-#include <catch2/catch.hpp>
 #include <mca/twm/TranspositionEntry.h>
+
+#include <catch2/catch.hpp>
 
 SCENARIO("monte_carlo_algorithm twm TranspositionEntry") {
     GIVEN("A typical TranspositionEntry") {
@@ -12,10 +13,10 @@ SCENARIO("monte_carlo_algorithm twm TranspositionEntry") {
         }
 
         THEN("After some update, the entry fields must be consistent") {
-            entry.update({{0, 0}}, -5);
-            entry.update({{1, 0}}, -10);
-            entry.update({{1, 1}}, -15);
-            entry.update({{0, 0}}, -20);
+            entry.update({{0, 0}}, -5, 0);
+            entry.update({{1, 0}}, -10, 0);
+            entry.update({{1, 1}}, -15, 1);
+            entry.update({{0, 0}}, -20, 1);
 
             REQUIRE(entry.does_contain({{0, 0}}));
             REQUIRE(entry.does_contain({{1, 0}}));
@@ -31,6 +32,10 @@ SCENARIO("monte_carlo_algorithm twm TranspositionEntry") {
             REQUIRE(entry.get_action_number_of_playout({{0, 0}}) == 2);
             REQUIRE(entry.get_action_number_of_playout({{1, 0}}) == 1);
             REQUIRE(entry.get_action_number_of_playout({{1, 1}}) == 1);
+
+            REQUIRE(entry.get_action_number_of_unique_hash_value({{0, 0}}) == 2);
+            REQUIRE(entry.get_action_number_of_unique_hash_value({{1, 0}}) == 1);
+            REQUIRE(entry.get_action_number_of_unique_hash_value({{1, 1}}) == 1);
         }
     }
 }
