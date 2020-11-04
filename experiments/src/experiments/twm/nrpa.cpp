@@ -61,6 +61,9 @@ void experiments::twm::nrpa::solve_problem_1(int grid_size, int team_count, int 
 
                 board = board.get_next_board(first_action);
                 solve_action_count++;
+
+                logger->info("Solve {}: {} burning cell left; {} action played", solve_index,
+                             board.get_burning_cell_count(), solve_action_count);
             }
 
             int solve_reward = board.get_reward();

@@ -60,6 +60,9 @@ void experiments::twm::random::solve_problem_1(int grid_size, int team_count, in
 
                 board = board.get_next_board(random_action);
                 solve_action_count++;
+
+                logger->info("Solve {}: {} burning cell left; {} action played", solve_index,
+                             board.get_burning_cell_count(), solve_action_count);
             }
 
             int solve_reward = board.get_reward();
