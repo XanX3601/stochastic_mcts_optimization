@@ -40,8 +40,9 @@ class twm::Board {
     const std::vector<twm::Action>& get_legal_actions() const;
     void reset_reward();
     void scale_fuel_amount(double scale);
-    int lowest_possible_reward();
-    int highest_possible_reward();
+    int lowest_possible_reward() const;
+    int highest_possible_reward() const;
+    Problem const& get_problem() const;
 };
 
 #endif /* TWM_BOARD_H */

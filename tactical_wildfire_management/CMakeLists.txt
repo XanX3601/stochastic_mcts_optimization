@@ -14,8 +14,6 @@ set(test_files
 
 add_library(tactical_wildfire_management ${source_files})
 
-target_link_libraries(tactical_wildfire_management fmt::fmt)
-
 target_include_directories(tactical_wildfire_management PUBLIC ./include)
 
 add_executable(test_tactical_wildfire_management

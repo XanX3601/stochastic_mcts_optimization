@@ -1,5 +1,6 @@
 #include <twm/Board.h>
 
+#include <algorithm>
 #include <numeric>
 #include <random>
 #include <stdexcept>
@@ -184,7 +185,7 @@ void twm::Board::scale_fuel_amount(double scale) {
     }
 }
 
-int twm::Board::lowest_possible_reward() {
+int twm::Board::lowest_possible_reward() const {
     int lowest_possible_reward = reward;
     for (int cell_index = 0; cell_index < problem->get_cell_count(); ++cell_index) {
         lowest_possible_reward +=
@@ -193,10 +194,7 @@ int twm::Board::lowest_possible_reward() {
     return lowest_possible_reward;
 }
 
-#include <fmt/core.h>
-#include <fmt/printf.h>
-
-int twm::Board::highest_possible_reward() {
+int twm::Board::highest_possible_reward() const {
     int highest_possible_reward = reward;
     std::vector<int> cell_indexes(problem->get_cell_count());
     std::vector<bool> is_each_cell_burning = this->is_each_cell_burning;
@@ -235,3 +233,5 @@ int twm::Board::highest_possible_reward() {
 
     return highest_possible_reward;
 }
+
+twm::Problem const& twm::Board::get_problem() const { return *problem; }

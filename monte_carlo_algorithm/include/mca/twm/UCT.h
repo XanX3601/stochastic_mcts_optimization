@@ -8,8 +8,19 @@
 
 namespace mca {
 namespace twm {
-int uct(const ::twm::Board& board, ::mca::twm::TranspositionTable& transposition_table, double c);
-int uct_playout(const ::twm::Board& board);
+namespace uct {
+class UCT {
+   private:
+    TranspositionTable transposition_table;
+    double exploration_parameter;
+
+   public:
+    UCT(double exploration_parameter);
+    int search(const ::twm::Board& board);
+    static int playout(const ::twm::Board& board);
+    TranspositionTable& get_transposition_table();
+};
+}  // namespace uct
 }  // namespace twm
 }  // namespace mca
 

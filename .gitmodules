@@ -7,3 +7,12 @@
 [submodule "libs/CLI11"]
 	path = libs/CLI11
 	url = https://github.com/CLIUtils/CLI11.git
+[submodule "libs/tabulate"]
+	path = libs/tabulate
+	url = https://github.com/p-ranav/tabulate.git
+[submodule "cmake_module/FindTBB"]
+	path = cmake_module/FindTBB
+	url = https://github.com/justusc/FindTBB.git
+[submodule "libs/spdlog"]
+	path = libs/spdlog
+	url = https://github.com/gabime/spdlog.git

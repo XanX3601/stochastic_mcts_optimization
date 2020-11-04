@@ -18,8 +18,8 @@ SCENARIO("monte_carlo_algorithm twm TranspositionTable") {
             }
 
             THEN("Any updates on any entry should be saved") {
-                table.update(0, {{0, 0}}, -10, 0);
-                table.update(0, {{0, 0}}, -5, 1);
+                table.get_entry(0).update({{0, 0}}, -10, 0);
+                table.get_entry(0).update({{0, 0}}, -5, 1);
 
                 REQUIRE(table.get_entry(0).get_hash_value() == 0);
                 REQUIRE(table.get_entry(0).get_accumulated_reward() == -15);

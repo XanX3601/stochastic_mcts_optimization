@@ -1,72 +1,57 @@
-#include <experiments/twm/ExperimentResult.h>
-#include <experiments/twm/experiments.h>
 #include <experiments/twm/grid.h>
-#include <fmt/core.h>
+#include <experiments/twm/random.h>
+#include <experiments/twm/uct.h>
 
 #include <CLI/CLI.hpp>
-#include <set>
 #include <string>
 
 int main(int argc, const char** argv) {
     CLI::App app;
 
-    std::string problem1 = "problem_1";
+    CLI::App* uct_app = app.add_subcommand("uct");
 
-    std::set<std::string> problems = {problem1};
+    int uct_grid_size;
+    uct_app->add_option("grid_size", uct_grid_size)->required();
 
-    std::string problem = problem1;
-    app.add_option("--problem", problem, "the problem to solve", true)
-        ->check(CLI::IsMember(problems));
+    int uct_team_count;
+    uct_app->add_option("team_count", uct_team_count)->required();
 
-    int grid_size = 8;
-    app.add_option("--grid-size", grid_size, "the size of the grid", true);
+    double uct_exploration_parameter = .5;
+    uct_app->add_option("--exploration_parameter,--ep", uct_exploration_parameter,
+                        "exploration parameter", true);
 
-    int team_count = 4;
-    app.add_option("--team-count", team_count, "the number of team", true);
+    double uct_search_time = 60;
+    uct_app->add_option("--search-time,--st", uct_search_time, "search time", true);
 
-    std::string result_file = "result";
-    app.add_option("--result-file", result_file, "the file in which write the result experiment",
-                   true);
+    int uct_solve_count = 1;
+    uct_app->add_option("--solve-count,--sc", uct_solve_count, "solve count", true);
 
-    CLI::App* uct_app = app.add_subcommand("uct", "Experiment using the UCT algorithm");
-
-    double c = .5;
-    uct_app->add_option("-c", c, "hyper parameter c", true);
-
-    int search_time = 60;
-    uct_app->add_option("--search-time", search_time, "search time per iteration in seconds", true);
+    std::string uct_result_file_path = "uct_result.csv";
+    uct_app->add_option("--result-file,--rf", uct_result_file_path, "result file path", true);
 
     uct_app->callback([&]() {
-        if (problem == problem1) {
-            auto result =
-                experiments::twm::experiment_uct_problem_1(grid_size, team_count, c, search_time);
-            result.save_to_file(result_file);
-            result.close_experiment();
-        } else {
-            fmt::print("Unknown problem: {}\n", problem);
-        }
+        experiments::twm::uct::solve_problem_1(uct_grid_size, uct_team_count, uct_solve_count,
+                                               uct_exploration_parameter, uct_search_time,
+                                               uct_result_file_path);
     });
 
-    CLI::App* random_app = app.add_subcommand("random", "Experiment using the random algorithm");
+    CLI::App* random_app = app.add_subcommand("random");
+
+    int random_grid_size;
+    random_app->add_option("grid_size", random_grid_size)->required();
+
+    int random_team_count;
+    random_app->add_option("team_count", random_team_count)->required();
+
+    int random_solve_count = 1;
+    random_app->add_option("--solve-count,--sc", random_solve_count, "solve count", true);
+
+    std::string random_result_file = "random_result.csv";
+    random_app->add_option("--result-file,--rf", random_result_file, "result file path", true);
 
     random_app->callback([&]() {
-        if (problem == problem1) {
-            auto result = experiments::twm::experiment_random_problem_1(grid_size, team_count);
-            result.save_to_file(result_file);
-            result.close_experiment();
-        } else {
-            fmt::print("Unknown problem: {}\n", problem);
-        }
-    });
-
-    CLI::App* testing_app = app.add_subcommand("test", "Just testing stuff");
-
-    testing_app->callback([&]() {
-        twm::Problem* problem = experiments::twm::generate_problem_1(4, 4);
-        twm::Board* board = experiments::twm::generate_grid_1(problem);
-        board->highest_possible_reward();
-        delete board;
-        delete problem;
+        experiments::twm::random::solve_problem_1(random_grid_size, random_team_count,
+                                                  random_solve_count, random_result_file);
     });
 
     CLI11_PARSE(app, argc, argv);

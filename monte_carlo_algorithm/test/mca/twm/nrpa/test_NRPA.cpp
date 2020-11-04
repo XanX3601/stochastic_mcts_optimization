@@ -1,12 +1,9 @@
-#include <mca/twm/UCT.h>
-#include <twm/Board.h>
-#include <twm/Problem.h>
+#include <mca/twm/nrpa/NRPA.h>
 
 #include <catch2/catch.hpp>
-#include <vector>
 
-SCENARIO("monte_carlo_algorithm twm UCT") {
-    GIVEN("A twm problem to solve using UCT") {
+SCENARIO("monte_carlo_algorithm twm nrpa NRPA") {
+    GIVEN("A twm problem to solve using NRPA") {
         int grid_width = 5;
         int grid_height = 5;
         int cell_amount = grid_width * grid_height;
@@ -25,10 +22,8 @@ SCENARIO("monte_carlo_algorithm twm UCT") {
 
         ::twm::Board root_board(&problem);
 
-        mca::twm::uct::UCT uct(50);
+        mca::twm::nrpa::NRPA nrpa(root_board, 2, 20, .5);
 
-        for (int i = 0; i < 50; ++i) {
-            uct.search(root_board);
-        }
+        nrpa.search();
     }
 }

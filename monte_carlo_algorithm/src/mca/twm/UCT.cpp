@@ -8,7 +8,10 @@
 #include "mca/twm/TranspositionEntry.h"
 #include "twm/Board.h"
 
-int mca::twm::uct_playout(const ::twm::Board& board) {
+mca::twm::uct::UCT::UCT(double exploration_parameter)
+    : exploration_parameter(exploration_parameter) {}
+
+int mca::twm::uct::UCT::playout(const ::twm::Board& board) {
     if (board.is_final()) {
         return board.get_reward();
     }
@@ -28,8 +31,7 @@ int mca::twm::uct_playout(const ::twm::Board& board) {
     return next_board.get_reward();
 }
 
-int mca::twm::uct(const ::twm::Board& board, ::mca::twm::TranspositionTable& transposition_table,
-                  double c) {
+int mca::twm::uct::UCT::search(const ::twm::Board& board) {
     if (board.is_final()) {
         return board.get_reward();
     }
@@ -60,7 +62,8 @@ int mca::twm::uct(const ::twm::Board& board, ::mca::twm::TranspositionTable& tra
                 }
 
                 value = (action_accumulated_reward / action_number_of_playout) +
-                        c * std::sqrt(std::log(number_of_playout) / action_number_of_playout);
+                        exploration_parameter *
+                            std::sqrt(std::log(number_of_playout) / action_number_of_playout);
             } else {
                 value = std::numeric_limits<double>::max();
             }
@@ -72,10 +75,9 @@ int mca::twm::uct(const ::twm::Board& board, ::mca::twm::TranspositionTable& tra
         }
 
         auto next_board = board.get_next_board(legal_actions[chosen_action_index]);
-        int reward = uct(next_board, transposition_table, c);
-        transposition_table.update(transposition_entry.get_hash_value(),
-                                   legal_actions[chosen_action_index], reward,
-                                   next_board.get_hash_value());
+        int reward = search(next_board);
+        transposition_table.get_entry(board.get_hash_value())
+            .update(legal_actions[chosen_action_index], reward, next_board.get_hash_value());
 
         return reward;
     } else {
@@ -88,11 +90,15 @@ int mca::twm::uct(const ::twm::Board& board, ::mca::twm::TranspositionTable& tra
         int random_action_index = distribution(generator);
 
         auto next_board = board.get_next_board(legal_actions[random_action_index]);
-        int reward = uct_playout(next_board);
+        int reward = playout(next_board);
 
-        transposition_table.update(board.get_hash_value(), legal_actions[random_action_index],
-                                   reward, next_board.get_hash_value());
+        transposition_table.get_entry(board.get_hash_value())
+            .update(legal_actions[random_action_index], reward, next_board.get_hash_value());
 
         return reward;
     }
+}
+
+mca::twm::TranspositionTable& mca::twm::uct::UCT::get_transposition_table() {
+    return transposition_table;
 }
