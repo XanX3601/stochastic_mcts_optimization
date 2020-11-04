@@ -1,4 +1,5 @@
 #include <experiments/twm/grid.h>
+#include <experiments/twm/nrpa.h>
 #include <experiments/twm/random.h>
 #include <experiments/twm/uct.h>
 
@@ -52,6 +53,35 @@ int main(int argc, const char** argv) {
     random_app->callback([&]() {
         experiments::twm::random::solve_problem_1(random_grid_size, random_team_count,
                                                   random_solve_count, random_result_file);
+    });
+
+    CLI::App* nrpa_app = app.add_subcommand("nrpa");
+
+    int nrpa_grid_size;
+    nrpa_app->add_option("grid_size", nrpa_grid_size)->required();
+
+    int nrpa_team_count;
+    nrpa_app->add_option("team_count", nrpa_team_count)->required();
+
+    int nrpa_solve_count = 1;
+    nrpa_app->add_option("--solve-count,--sc", nrpa_solve_count, "solve count", true);
+
+    int nrpa_root_level = 1;
+    nrpa_app->add_option("--root-level,--rl", nrpa_root_level, "root level", true);
+
+    int nrpa_iteration_count = 100;
+    nrpa_app->add_option("--iteration-count", nrpa_iteration_count, "iteration count", true);
+
+    double nrpa_learning_step = 1;
+    nrpa_app->add_option("--learning-step,--ls", nrpa_learning_step, "learning step", true);
+
+    std::string nrpa_result_file_path = "nrpa_result.csv";
+    nrpa_app->add_option("--result-file,--rf", nrpa_result_file_path, "result file path", true);
+
+    nrpa_app->callback([&]() {
+        experiments::twm::nrpa::solve_problem_1(nrpa_grid_size, nrpa_team_count, nrpa_solve_count,
+                                                nrpa_root_level, nrpa_iteration_count,
+                                                nrpa_learning_step, nrpa_result_file_path);
     });
 
     CLI11_PARSE(app, argc, argv);

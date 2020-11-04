@@ -1,17 +1,20 @@
 #include <experiments/twm/grid.h>
 #include <experiments/twm/nrpa.h>
 #include <fmt/os.h>
+#include <mca/twm/nrpa/NRPA.h>
+#include <mca/twm/nrpa/Result.h>
+#include <mca/twm/nrpa/Sequence.h>
+#include <mca/twm/nrpa/code.h>
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/spdlog.h>
+#include <twm/Action.h>
 #include <twm/Board.h>
 #include <twm/Problem.h>
 
 #include <algorithm>
 #include <chrono>
 #include <execution>
-#include <limits>
 #include <mutex>
-#include <random>
 #include <vector>
 
 void experiments::twm::nrpa::solve_problem_1(int grid_size, int team_count, int solve_count,
@@ -46,20 +49,17 @@ void experiments::twm::nrpa::solve_problem_1(int grid_size, int team_count, int 
             int solve_highest_reward = p_board->highest_possible_reward();
             int solve_action_count = 0;
 
-            std::random_device random_device;
-            std::mt19937 generator(random_device());
-
             ::twm::Board board(*p_board);
             while (!board.is_final()) {
-                auto search_start = std::chrono::steady_clock::now();
+                mca::twm::nrpa::NRPA nrpa(board, root_level, iteration_count, learning_step);
 
-                auto legal_actions = board.get_legal_actions();
-                std::uniform_int_distribution<int> distribution(0, legal_actions.size() - 1);
+                mca::twm::nrpa::Result result = nrpa.search();
+                mca::twm::nrpa::Sequence sequence = result.get_sequence();
+                int first_code = sequence.get_chosen_code(0);
+                ::twm::Action first_action =
+                    mca::twm::nrpa::decodify_action(*p_problem, first_code);
 
-                int random_action_index = distribution(generator);
-                ::twm::Action random_action = legal_actions[random_action_index];
-
-                board = board.get_next_board(random_action);
+                board = board.get_next_board(first_action);
                 solve_action_count++;
             }
 
