@@ -1,6 +1,6 @@
-#include <experiments/twm/grid.h>
 #include <experiments/twm/nrpa.h>
 #include <experiments/twm/random.h>
+#include <experiments/twm/snrpa.h>
 #include <experiments/twm/uct.h>
 
 #include <CLI/CLI.hpp>
@@ -70,7 +70,7 @@ int main(int argc, const char** argv) {
     nrpa_app->add_option("--root-level,--rl", nrpa_root_level, "root level", true);
 
     int nrpa_iteration_count = 100;
-    nrpa_app->add_option("--iteration-count", nrpa_iteration_count, "iteration count", true);
+    nrpa_app->add_option("--iteration-count,--ic", nrpa_iteration_count, "iteration count", true);
 
     double nrpa_learning_step = 1;
     nrpa_app->add_option("--learning-step,--ls", nrpa_learning_step, "learning step", true);
@@ -82,6 +82,43 @@ int main(int argc, const char** argv) {
         experiments::twm::nrpa::solve_problem_1(nrpa_grid_size, nrpa_team_count, nrpa_solve_count,
                                                 nrpa_root_level, nrpa_iteration_count,
                                                 nrpa_learning_step, nrpa_result_file_path);
+    });
+
+    CLI::App* snrpa_app = app.add_subcommand("snrpa");
+
+    int snrpa_grid_size;
+    snrpa_app->add_option("grid_size", snrpa_grid_size)->required();
+
+    int snrpa_team_count;
+    snrpa_app->add_option("team_count", snrpa_team_count)->required();
+
+    int snrpa_solve_count = 1;
+    snrpa_app->add_option("--solve-count,--sc", snrpa_solve_count, "solve count", true);
+
+    int snrpa_root_level = 1;
+    snrpa_app->add_option("--root-level,--rl", snrpa_root_level, "root level", true);
+
+    double snrpa_learning_step = 1;
+    snrpa_app->add_option("--learning-step,--ls", snrpa_learning_step, "learning step", true);
+
+    int snrpa_iteration_count = 100;
+    snrpa_app->add_option("--iteration-count,--ic", snrpa_iteration_count, "iteration count", true);
+
+    int snrpa_playout_count = 100;
+    snrpa_app->add_option("--playout-count,--pc", snrpa_playout_count, "playout count", true);
+
+    std::string snrpa_result_file_path = "snrpa_result.csv";
+    snrpa_app->add_option("--result-file,--rf", snrpa_result_file_path, "result file path", true);
+
+    std::string snrpa_dir_sequence_path = "./";
+    snrpa_app->add_option("--sequence-dir,--sd", snrpa_dir_sequence_path, "sequence directory path",
+                          true);
+
+    snrpa_app->callback([&]() {
+        experiments::twm::snrpa::solve_problem_1(
+            snrpa_grid_size, snrpa_team_count, snrpa_solve_count, snrpa_root_level,
+            snrpa_learning_step, snrpa_iteration_count, snrpa_playout_count, snrpa_result_file_path,
+            snrpa_dir_sequence_path);
     });
 
     CLI11_PARSE(app, argc, argv);

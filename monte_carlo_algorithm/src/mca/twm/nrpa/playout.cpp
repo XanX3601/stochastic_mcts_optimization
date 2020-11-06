@@ -2,7 +2,6 @@
 #include <mca/twm/nrpa/playout.h>
 
 #include <random>
-
 mca::twm::nrpa::Sequence mca::twm::nrpa::playout(const ::twm::Board& board, const Policy& policy) {
     Sequence sequence;
     ::twm::Board playout_board(board);

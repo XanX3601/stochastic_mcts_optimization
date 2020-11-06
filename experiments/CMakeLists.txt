@@ -5,6 +5,7 @@ set(source_files
     ./src/experiments/twm/uct.cpp
     ./src/experiments/twm/random.cpp
     ./src/experiments/twm/nrpa.cpp
+    ./src/experiments/twm/snrpa.cpp
     )
 
 set(test_files
@@ -12,6 +13,7 @@ set(test_files
     ./test/experiments/twm/test_uct.cpp
     ./test/experiments/twm/test_random.cpp
     ./test/experiments/twm/test_nrpa.cpp
+    ./test/experiments/twm/test_snrpa.cpp
     )
 
 add_executable(experiments
