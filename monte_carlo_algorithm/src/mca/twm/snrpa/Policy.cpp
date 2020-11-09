@@ -67,10 +67,6 @@ mca::twm::snrpa::Sequence mca::twm::snrpa::Policy::generate_sequence() const {
         auto code_to_weight_entry = code_to_weight.begin();
 
         while (target > 0) {
-            if (code_to_weight_entry == sequence_codes.end()) {
-                sequence_codes.size();
-            }
-
             if (sequence_codes_set.find(code_to_weight_entry->first) == sequence_codes_set.end()) {
                 target -= std::exp(code_to_weight_entry->second);
             }
