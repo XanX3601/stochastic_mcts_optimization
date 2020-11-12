@@ -64,10 +64,10 @@ mca::twm::snrpa::Sequence mca::twm::snrpa::Policy::generate_sequence() const {
         std::uniform_real_distribution<double> dis(0, exp_weight_sum);
 
         double target = dis(gen);
-        auto code_to_weight_entry = code_to_weight.begin();
+        auto code_to_weight_entry = code_to_weight.cbegin();
 
         while (target > 0) {
-            if (sequence_codes_set.find(code_to_weight_entry->first) == sequence_codes_set.end()) {
+            if (!sequence_codes_set.count(code_to_weight_entry->first)) {
                 target -= std::exp(code_to_weight_entry->second);
             }
 
