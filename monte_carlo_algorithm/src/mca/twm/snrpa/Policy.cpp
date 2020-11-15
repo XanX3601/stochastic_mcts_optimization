@@ -51,9 +51,12 @@ void mca::twm::snrpa::Policy::adapt(const mca::twm::snrpa::Sequence& sequence,
 
 double mca::twm::snrpa::Policy::get_code_weight(int code) const { return code_to_weight.at(code); }
 
+#include <iostream>
+
 mca::twm::snrpa::Sequence mca::twm::snrpa::Policy::generate_sequence() const {
     std::vector<int> sequence_codes(code_to_weight.size());
     std::unordered_set<int> sequence_codes_set;
+    double sequence_weight_sum = 0;
 
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -61,12 +64,14 @@ mca::twm::snrpa::Sequence mca::twm::snrpa::Policy::generate_sequence() const {
     double exp_weight_sum = this->exp_weight_sum;
 
     for (int code_index = 0; code_index < code_to_weight.size(); ++code_index) {
+        exp_weight_sum = this->exp_weight_sum - sequence_weight_sum;
+
         std::uniform_real_distribution<double> dis(0, exp_weight_sum);
 
         double target = dis(gen);
         auto code_to_weight_entry = code_to_weight.cbegin();
 
-        while (target > 0) {
+        while (target > 0 && code_to_weight_entry != code_to_weight.end()) {
             if (!sequence_codes_set.count(code_to_weight_entry->first)) {
                 target -= std::exp(code_to_weight_entry->second);
             }
@@ -78,7 +83,7 @@ mca::twm::snrpa::Sequence mca::twm::snrpa::Policy::generate_sequence() const {
 
         sequence_codes[code_index] = code_to_weight_entry->first;
         sequence_codes_set.insert(code_to_weight_entry->first);
-        exp_weight_sum -= std::exp(code_to_weight_entry->second);
+        sequence_weight_sum += std::exp(code_to_weight_entry->second);
     }
 
     return {sequence_codes};

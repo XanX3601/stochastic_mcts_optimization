@@ -2,6 +2,7 @@
 #include <mca/twm/nrpa/playout.h>
 
 #include <random>
+#include <vector>
 mca::twm::nrpa::Sequence mca::twm::nrpa::playout(const ::twm::Board& board, const Policy& policy) {
     Sequence sequence;
     ::twm::Board playout_board(board);
@@ -10,18 +11,21 @@ mca::twm::nrpa::Sequence mca::twm::nrpa::playout(const ::twm::Board& board, cons
     std::mt19937 generator(random_device());
 
     while (!playout_board.is_final()) {
-        auto legal_actions = playout_board.get_legal_actions();
-        std::vector<double> weights;
-        std::vector<int> possible_codes;
+        const std::vector<::twm::Action>& legal_actions = playout_board.get_legal_actions();
+        std::vector<double> weights(legal_actions.size());
+        std::vector<int> possible_codes(legal_actions.size());
         double sum_weight = 0;
 
+        int action_index = 0;
         for (auto action : legal_actions) {
             int code = codify_action(playout_board, action);
             double weight = std::exp(policy.get_weight(code));
 
-            weights.push_back(weight);
-            possible_codes.push_back(code);
+            weights[action_index] = weight;
+            possible_codes[action_index] = code;
             sum_weight += weight;
+
+            action_index++;
         }
 
         std::uniform_real_distribution<> distribution(0, sum_weight);
