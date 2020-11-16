@@ -1,5 +1,3 @@
-find_package(TBB COMPONENTS tbbmalloc tbbmalloc_proxy tbb_preview)
-
 set(source_files
     ./src/experiments/twm/grid.cpp
     ./src/experiments/twm/uct.cpp
@@ -22,7 +20,6 @@ add_executable(experiments
     )
 
 target_include_directories(experiments PUBLIC ./include)
-target_include_directories(experiments PUBLIC ${TBB_INCLUDE_DIRS})
 
 target_link_libraries(experiments tactical_wildfire_management)
 target_link_libraries(experiments monte_carlo_algorithm)
