@@ -2,21 +2,20 @@
 #define MCA_TWM_SNRPA_POLICY
 #include <mca/twm/snrpa/Sequence.h>
 
-#include <unordered_map>
-#include <unordered_set>
+#include <vector>
 
 namespace mca {
 namespace twm {
 namespace snrpa {
 class Policy {
    private:
-    std::unordered_map<int, double> code_to_weight;
+    std::vector<double> code_weights;
     double exp_weight_sum;
 
     void set_weight(int code, double weight);
 
    public:
-    Policy(const std::unordered_set<int> codes);
+    Policy(int code_count);
     void adapt(const Sequence& sequence, double learning_step);
     double get_code_weight(int code) const;
     Sequence generate_sequence() const;

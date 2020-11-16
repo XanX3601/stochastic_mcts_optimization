@@ -114,11 +114,22 @@ int main(int argc, const char** argv) {
     snrpa_app->add_option("--sequence-dir,--sd", snrpa_dir_sequence_path, "sequence directory path",
                           true);
 
+    bool snrpa_use_only_one_sequence;
+    snrpa_app->add_flag("--one-sequence,--os", snrpa_use_only_one_sequence,
+                        "use only one sequence");
+
     snrpa_app->callback([&]() {
-        experiments::twm::snrpa::solve_problem_1(
-            snrpa_grid_size, snrpa_team_count, snrpa_solve_count, snrpa_root_level,
-            snrpa_learning_step, snrpa_iteration_count, snrpa_playout_count, snrpa_result_file_path,
-            snrpa_dir_sequence_path);
+        if (snrpa_use_only_one_sequence) {
+            experiments::twm::snrpa::solve_problem_1_with_one_sequence(
+                snrpa_grid_size, snrpa_team_count, snrpa_solve_count, snrpa_root_level,
+                snrpa_learning_step, snrpa_iteration_count, snrpa_playout_count,
+                snrpa_result_file_path, snrpa_dir_sequence_path);
+        } else {
+            experiments::twm::snrpa::solve_problem_1(
+                snrpa_grid_size, snrpa_team_count, snrpa_solve_count, snrpa_root_level,
+                snrpa_learning_step, snrpa_iteration_count, snrpa_playout_count,
+                snrpa_result_file_path, snrpa_dir_sequence_path);
+        }
     });
 
     CLI11_PARSE(app, argc, argv);

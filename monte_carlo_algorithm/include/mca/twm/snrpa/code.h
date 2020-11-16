@@ -15,6 +15,8 @@ int codify_action(const ::twm::Board& board, const ::twm::Action& action);
 bool is_code_legal(const ::twm::Board& board, int code);
 bool does_code_target_burning_cell(const ::twm::Problem& problem, int code);
 int get_target_team_index(const ::twm::Problem& problem, int code);
+int code_to_index(int code);
+int index_to_code(int code_index);
 }  // namespace snrpa
 }  // namespace twm
 }  // namespace mca

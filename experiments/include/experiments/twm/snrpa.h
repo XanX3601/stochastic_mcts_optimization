@@ -9,7 +9,11 @@ namespace snrpa {
 void solve_problem_1(int grid_size, int team_count, int solve_count, int root_level,
                      double learning_step, int iteration_count, int playout_count,
                      std::string result_file_path, std::string dir_sequence_path);
-}
+void solve_problem_1_with_one_sequence(int grid_size, int team_count, int solve_count,
+                                       int root_level, double learning_step, int iteration_count,
+                                       int playout_count, std::string result_file_path,
+                                       std::string dir_sequence_path);
+}  // namespace snrpa
 }  // namespace twm
 }  // namespace experiments
 

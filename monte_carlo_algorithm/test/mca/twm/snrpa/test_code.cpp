@@ -143,5 +143,11 @@ SCENARIO("monte_carlo_algorithm twm snrpa code") {
                 }
             }
         }
+
+        THEN("The index of code -1 is 0") { REQUIRE(mca::twm::snrpa::code_to_index(-1) == 0); }
+
+        THEN("The code corresponding to index 0 is -1") {
+            REQUIRE(mca::twm::snrpa::index_to_code(0) == -1);
+        }
     }
 }

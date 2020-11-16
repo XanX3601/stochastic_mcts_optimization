@@ -79,3 +79,7 @@ int mca::twm::snrpa::get_target_team_index(const ::twm::Problem& problem, int co
 
     return code / problem.get_cell_count();
 }
+
+int mca::twm::snrpa::code_to_index(int code) { return code + 1; }
+
+int mca::twm::snrpa::index_to_code(int code_index) { return code_index - 1; }
