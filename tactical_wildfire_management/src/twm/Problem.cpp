@@ -103,6 +103,10 @@ twm::Cell twm::Problem::index_to_cell(int cell_index) const {
     return twm::Cell(cell_index % grid_width, cell_index / grid_width);
 }
 
+bool twm::Problem::is_in_grid(const twm::Cell& cell) const {
+    return 0 <= cell.x && cell.x < grid_width && 0 <= cell.y && cell.y < grid_height;
+}
+
 int twm::Problem::get_grid_width() const { return grid_width; }
 
 int twm::Problem::get_grid_height() const { return grid_height; }

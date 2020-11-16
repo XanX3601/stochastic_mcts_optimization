@@ -30,9 +30,10 @@ void mca::twm::nrpa::Policy::adapt(const Sequence& sequence, double learning_ste
 
         auto possible_codes = sequence.get_possible_codes(move_index);
 
-        double sum_weight = std::accumulate(
-            possible_codes.begin(), possible_codes.end(), 0,
-            [&](double sum, int code) { return std::move(sum) + std::exp(get_weight(code)); });
+        double sum_weight = 0;
+        for (int code : possible_codes) {
+            sum_weight += std::exp(get_weight(code));
+        }
 
         std::for_each(possible_codes.begin(), possible_codes.end(), [&](int code) {
             adapted_policy.set_weight(code,

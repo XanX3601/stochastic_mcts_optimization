@@ -1,6 +1,7 @@
 #include <mca/twm/nrpa/code.h>
 #include <mca/twm/nrpa/playout.h>
 
+#include <algorithm>
 #include <random>
 #include <vector>
 mca::twm::nrpa::Sequence mca::twm::nrpa::playout(const ::twm::Board& board, const Policy& policy) {
@@ -11,34 +12,53 @@ mca::twm::nrpa::Sequence mca::twm::nrpa::playout(const ::twm::Board& board, cons
     std::mt19937 generator(random_device());
 
     while (!playout_board.is_final()) {
-        const std::vector<::twm::Action>& legal_actions = playout_board.get_legal_actions();
-        std::vector<double> weights(legal_actions.size());
-        std::vector<int> possible_codes(legal_actions.size());
-        double sum_weight = 0;
+        auto& legal_action = playout_board.get_legal_actions();
 
-        int action_index = 0;
-        for (auto action : legal_actions) {
-            int code = codify_action(playout_board, action);
-            double weight = std::exp(policy.get_weight(code));
+        int action_count = legal_action.size();
 
-            weights[action_index] = weight;
-            possible_codes[action_index] = code;
-            sum_weight += weight;
+        std::vector<int> codes(action_count);
+        std::vector<double> cumulative_weights(action_count);
 
-            action_index++;
+        int code = codify_action(playout_board, legal_action[0]);
+        double weight = std::exp(policy.get_weight(code));
+        codes[0] = code;
+        cumulative_weights[0] = weight;
+
+        for (int action_index = 1; action_index < action_count; ++action_index) {
+            code = codify_action(playout_board, legal_action[action_index]);
+            weight = std::exp(policy.get_weight(code));
+
+            codes[action_index] = code;
+            cumulative_weights[action_index] = cumulative_weights[action_index - 1] + weight;
         }
 
-        std::uniform_real_distribution<> distribution(0, sum_weight);
-        double target = distribution(generator) - weights[0];
+        std::uniform_real_distribution<double> distribution(0,
+                                                            cumulative_weights[action_count - 1]);
+        double target = distribution(generator);
 
-        int chosen_code_index = 0;
-        while (target > 0) {
-            chosen_code_index++;
-            target -= weights[chosen_code_index];
+        int low = 0;
+        int high = action_count;
+        bool finished = false;
+
+        while (!finished) {
+            int mid = (low + high) / 2;
+            double distance = cumulative_weights[mid];
+
+            if (distance < target) {
+                low = mid + 1;
+            } else if (distance > target) {
+                high = mid;
+            } else {
+                low = mid;
+                finished = true;
+            }
+
+            finished = finished || low >= high;
         }
 
-        playout_board = playout_board.get_next_board(legal_actions[chosen_code_index]);
-        sequence.add_move(possible_codes[chosen_code_index], possible_codes);
+        int chosen_action_index = low;
+        sequence.add_move(codes[chosen_action_index], codes);
+        playout_board = playout_board.get_next_board(legal_action[chosen_action_index]);
     }
 
     sequence.score = playout_board.get_reward();

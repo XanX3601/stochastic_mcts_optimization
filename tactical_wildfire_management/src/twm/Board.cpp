@@ -4,6 +4,7 @@
 #include <numeric>
 #include <random>
 #include <stdexcept>
+#include <unordered_set>
 #include <vector>
 
 twm::Board::Board(twm::Problem* problem) : problem(problem) {
@@ -90,6 +91,30 @@ twm::Board twm::Board::get_next_board(const twm::Action& action) const {
         std::mt19937 gen(rd());
         std::uniform_real_distribution<double> dis(0, 1);
 
+        std::unordered_set<int> extinguished_cells_index;
+
+        for (int team_index = 0; team_index < problem->get_team_count(); ++team_index) {
+            Cell team_cell = get_team_cell(team_index);
+            int team_cell_index = problem->cell_to_index(team_cell);
+
+            if (problem->is_in_grid(team_cell) && is_cell_burning(team_cell_index) &&
+                get_cell_fuel_amount(team_cell_index) > 0) {
+                double random = dis(gen);
+
+                if (random < problem->get_probability_to_extinguish_cell(team_cell_index)) {
+                    if (next_board.is_cell_burning(team_cell_index)) {
+                        next_board.hash_value ^=
+                            problem->get_cell_burning_random_bitstring(team_cell_index, true);
+                        next_board.hash_value ^=
+                            problem->get_cell_burning_random_bitstring(team_cell_index, false);
+                        next_board.is_each_cell_burning[team_cell_index] = false;
+                        next_board.burning_cell_count--;
+                        extinguished_cells_index.insert(team_cell_index);
+                    }
+                }
+            }
+        }
+
         for (int cell_index = 0; cell_index < problem->get_cell_count(); ++cell_index) {
             if (is_cell_burning(cell_index)) {
                 double rho_2 = 1;
@@ -102,18 +127,11 @@ twm::Board twm::Board::get_next_board(const twm::Action& action) const {
                         problem->get_cell_fuel_random_bitstring(cell_index, cell_fuel_amount - 1);
                     next_board.each_cell_fuel_amount[cell_index] = cell_fuel_amount - 1;
 
-                    twm::Cell cell = problem->index_to_cell(cell_index);
-                    for (int team_index = 0; team_index < problem->get_team_count(); ++team_index) {
-                        if (get_team_cell(team_index) == cell) {
-                            rho_2 *= (1 - problem->get_probability_to_extinguish_cell(cell_index));
-                        }
-                    }
-
-                    rho_2 = 1 - rho_2;
+                    rho_2 = 0;
                 }
 
                 double random = dis(gen);
-                if (random <= rho_2) {
+                if (random < rho_2) {
                     next_board.hash_value ^=
                         problem->get_cell_burning_random_bitstring(cell_index, true);
                     next_board.hash_value ^=
@@ -129,11 +147,20 @@ twm::Board twm::Board::get_next_board(const twm::Action& action) const {
                 if (get_cell_fuel_amount(cell_index) > 0) {
                     rho_1 = 1;
 
-                    for (int other_cell_index = 0; other_cell_index < problem->get_cell_count();
-                         ++other_cell_index) {
-                        rho_1 *= (1 - problem->get_probability_that_y_ignites_x(cell_index,
-                                                                                other_cell_index) *
-                                          is_cell_burning(other_cell_index));
+                    Cell cell = problem->index_to_cell(cell_index);
+
+                    for (int x_diff = -1; x_diff < 2; ++x_diff) {
+                        for (int y_diff = -1; y_diff < 2; ++y_diff) {
+                            Cell neighbor{cell.x + x_diff, cell.y + y_diff};
+                            int neighbor_index = problem->cell_to_index(neighbor);
+
+                            if (problem->is_in_grid(neighbor) && neighbor != cell &&
+                                !extinguished_cells_index.count(neighbor_index)) {
+                                rho_1 *= (1 - problem->get_probability_that_y_ignites_x(
+                                                  cell_index, neighbor_index) *
+                                                  is_cell_burning(neighbor_index));
+                            }
+                        }
                     }
 
                     rho_1 = 1 - rho_1;
