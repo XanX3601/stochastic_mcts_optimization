@@ -9,6 +9,7 @@
 namespace mca {
 namespace twm {
 namespace snrpa {
+int compute_code_count(const ::twm::Problem& problem);
 std::unordered_set<int> compute_all_codes(const ::twm::Problem& problem);
 int codify_action(const ::twm::Board& board, const ::twm::Action& action);
 ::twm::Action decodify_action(const ::twm::Problem& problem, int code);

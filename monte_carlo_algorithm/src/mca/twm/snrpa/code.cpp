@@ -1,5 +1,13 @@
 #include <mca/twm/snrpa/code.h>
 
+int mca::twm::snrpa::compute_code_count(const ::twm::Problem& problem) {
+    int biggest_cell_index = problem.get_cell_count() - 1;
+    int team_count = problem.get_team_count();
+    int cell_count = problem.get_cell_count();
+
+    return 2 + biggest_cell_index + (team_count - 1 + team_count) * cell_count;
+}
+
 std::unordered_set<int> mca::twm::snrpa::compute_all_codes(const ::twm::Problem& problem) {
     std::unordered_set<int> codes;
 

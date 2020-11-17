@@ -36,6 +36,8 @@ void experiments::twm::nrpa::solve_problem_1(int grid_size, int team_count, int 
     std::vector<int> solve_indexes(solve_count, 0);
     std::iota(solve_indexes.begin(), solve_indexes.end(), 0);
 
+    int solve_done_count = 0;
+
     std::for_each(
         std::execution::par, solve_indexes.begin(), solve_indexes.end(), [&](int solve_index) {
             logger->info("Starting solve {}", solve_index);
@@ -74,9 +76,11 @@ void experiments::twm::nrpa::solve_problem_1(int grid_size, int team_count, int 
             result_file.print("{};{};{};{};{};{};{}\n", solve_index, solve_duration.count(),
                               solve_lowest_reward, solve_reward, solve_highest_reward,
                               solve_action_count, solve_action_count / team_count);
+            solve_done_count++;
             result_file_lock.unlock();
 
-            logger->info("Done solve {} in {} seconds", solve_index, solve_duration.count());
+            logger->info("Done solve {} in {} seconds; {} more solve to go", solve_index,
+                         solve_duration.count(), solve_count);
         });
 
     auto end = std::chrono::steady_clock::now();

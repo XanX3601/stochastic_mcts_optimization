@@ -9,7 +9,8 @@ namespace twm {
 namespace snrpa {
 class Policy {
    private:
-    std::vector<double> code_weights;
+    int code_count;
+    std::vector<double> each_code_weight;
     double exp_weight_sum;
 
     void set_weight(int code, double weight);

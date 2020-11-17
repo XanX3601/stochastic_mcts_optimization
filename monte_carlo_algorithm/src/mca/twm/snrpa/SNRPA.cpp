@@ -15,7 +15,7 @@ mca::twm::snrpa::SNRPA::SNRPA(const ::twm::Board& root_board, int root_level, do
 mca::twm::snrpa::Result mca::twm::snrpa::SNRPA::search() const {
     Result result;
 
-    Sequence sequence = search(root_level, compute_all_codes(root_board.get_problem()), result);
+    Sequence sequence = search(root_level, {compute_code_count(root_board.get_problem())}, result);
 
     result.set_sequence(sequence);
     result.close();

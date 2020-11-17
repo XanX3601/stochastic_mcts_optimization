@@ -149,5 +149,9 @@ SCENARIO("monte_carlo_algorithm twm snrpa code") {
         THEN("The code corresponding to index 0 is -1") {
             REQUIRE(mca::twm::snrpa::index_to_code(0) == -1);
         }
+
+        THEN("The code count must be 201") {
+            REQUIRE(mca::twm::snrpa::compute_code_count(problem) == 201);
+        }
     }
 }
