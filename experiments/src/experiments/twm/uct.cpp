@@ -97,7 +97,7 @@ void experiments::twm::uct::solve_problem_1(int grid_size, int team_count, int s
             result_file_lock.unlock();
 
             logger->info("Done solve {} in {} seconds; {} more solve to go", solve_index,
-                         solve_duration.count(), solve_count);
+                         solve_duration.count(), solve_count - solve_done_count);
         });
 
     auto end = std::chrono::steady_clock::now();
