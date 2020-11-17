@@ -2,45 +2,42 @@
 #include <mca/twm/snrpa/code.h>
 
 #include <cmath>
+#include <iostream>
 #include <random>
 
-void mca::twm::snrpa::Policy::set_weight(int code, double weight) {
-    double current_weight = each_code_weight[code_to_index(code)];
-    exp_weight_sum -= std::exp(current_weight);
-    exp_weight_sum += std::exp(weight);
-    each_code_weight[code_to_index(code)] = weight;
-}
-
 mca::twm::snrpa::Policy::Policy(int code_count)
-    : each_code_weight(code_count, 0), code_count(code_count), exp_weight_sum(code_count) {}
+    : each_code_weight(code_count, 0), code_count(code_count) {}
 
 void mca::twm::snrpa::Policy::adapt(const mca::twm::snrpa::Sequence& sequence,
                                     double learning_step) {
-    double exp_weight_sum_adapt = exp_weight_sum;
-
-    for (int adapt_index = 0; adapt_index < sequence.get_code_count() - 1; ++adapt_index) {
-        double exp_weight_sum_adapt_copy = exp_weight_sum_adapt;
-
-        int code_to_adapt = sequence.get_code(adapt_index);
-        double weight = each_code_weight[code_to_index(code_to_adapt)];
-
-        exp_weight_sum_adapt_copy -= std::exp(weight);
-
-        set_weight(code_to_adapt, weight + learning_step -
-                                      learning_step * (std::exp(weight) / exp_weight_sum_adapt));
-
-        for (int sequence_index = adapt_index + 1; sequence_index < sequence.get_code_count();
-             ++sequence_index) {
-            int code = sequence.get_code(sequence_index);
-            weight = each_code_weight[code_to_index(code)];
-
-            exp_weight_sum_adapt_copy -= std::exp(weight);
-
-            double new_weight = weight - learning_step * (std::exp(weight) / exp_weight_sum_adapt);
-            set_weight(code, new_weight);
-            exp_weight_sum_adapt_copy += std::exp(new_weight);
+    for (int sequence_index = 0; sequence_index < sequence.get_code_count() - 1; ++sequence_index) {
+        // compute exp weight sum
+        double exp_weight_sum = 0;
+        for (int sequence_index_bis = sequence_index;
+             sequence_index_bis < sequence.get_code_count(); ++sequence_index_bis) {
+            int code_index = code_to_index(sequence.get_code(sequence_index_bis));
+            double exp_weight = std::exp(each_code_weight[code_index]);
+            exp_weight_sum += exp_weight;
         }
-        exp_weight_sum_adapt = exp_weight_sum_adapt_copy;
+
+        int code_index = code_to_index(sequence.get_code(sequence_index));
+        each_code_weight[code_index] =
+            (each_code_weight[code_index] + learning_step) -
+            learning_step * (std::exp(each_code_weight[code_index]) / exp_weight_sum);
+
+        for (int sequence_index_bis = sequence_index + 1;
+             sequence_index_bis < sequence.get_code_count(); ++sequence_index_bis) {
+            code_index = code_to_index(sequence.get_code(sequence_index_bis));
+            each_code_weight[code_index] =
+                each_code_weight[code_index] -
+                learning_step * (std::exp(each_code_weight[code_index]) / exp_weight_sum);
+        }
+    }
+
+    for (double weight : each_code_weight) {
+        if (std::isinf(weight)) {
+            std::cout << "INF ALERT" << std::endl;
+        }
     }
 }
 
@@ -108,6 +105,21 @@ mca::twm::snrpa::Sequence mca::twm::snrpa::Policy::generate_sequence() const {
                 cumulative_weights[code_index] =
                     cumulative_weights[code_index - 1] + std::exp(each_code_weight[code_index]);
             }
+        }
+    }
+
+    for (int code_index = 0; code_index < each_code_weight.size(); ++code_index) {
+        int code = index_to_code(code_index);
+        int found = 0;
+
+        for (auto sequence_code : sequence_codes) {
+            if (sequence_code == code) {
+                found++;
+            }
+        }
+
+        if (found != 1) {
+            std::cout << "ALERT" << std::endl;
         }
     }
 

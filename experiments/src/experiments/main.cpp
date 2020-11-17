@@ -114,7 +114,7 @@ int main(int argc, const char** argv) {
     snrpa_app->add_option("--sequence-dir,--sd", snrpa_dir_sequence_path, "sequence directory path",
                           true);
 
-    bool snrpa_use_only_one_sequence;
+    bool snrpa_use_only_one_sequence = false;
     snrpa_app->add_flag("--one-sequence,--os", snrpa_use_only_one_sequence,
                         "use only one sequence");
 
