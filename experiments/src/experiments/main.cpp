@@ -1,3 +1,4 @@
+#include <experiments/twm/grave.h>
 #include <experiments/twm/nrpa.h>
 #include <experiments/twm/random.h>
 #include <experiments/twm/snrpa.h>
@@ -130,6 +131,35 @@ int main(int argc, const char** argv) {
                 snrpa_learning_step, snrpa_iteration_count, snrpa_playout_count,
                 snrpa_result_file_path, snrpa_dir_sequence_path);
         }
+    });
+
+    CLI::App* grave_app = app.add_subcommand("grave");
+
+    int grave_grid_size;
+    grave_app->add_option("grid_size", grave_grid_size)->required();
+
+    int grave_team_count;
+    grave_app->add_option("team_count", grave_team_count)->required();
+
+    double grave_bias = .01;
+    grave_app->add_option("--bias,-b", grave_bias, "bias", true);
+
+    int grave_ref = 50;
+    grave_app->add_option("--ref,-r", grave_ref, "ref", true);
+
+    double grave_search_time = 60;
+    grave_app->add_option("--search-time,--st", grave_search_time, "search time", true);
+
+    int grave_solve_count = 1;
+    grave_app->add_option("--solve-count,--sc", grave_solve_count, "solve count", true);
+
+    std::string grave_result_file_path = "uct_result.csv";
+    grave_app->add_option("--result-file,--rf", grave_result_file_path, "result file path", true);
+
+    grave_app->callback([&]() {
+        experiments::twm::grave::solve_problem_1(grave_grid_size, grave_team_count,
+                                                 grave_solve_count, grave_bias, grave_ref,
+                                                 grave_search_time, grave_result_file_path);
     });
 
     CLI11_PARSE(app, argc, argv);
