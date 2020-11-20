@@ -1,0 +1,42 @@
+\subsection{Key steps of a \acrshort{mcts}}%
+\label{sub:key_components_of_a_mcts}
+
+A \gls{mcts} algorithm such as \gls{uct} follows four steps that are repeated indefinitely.
+Theses steps are the selection, the expansion, the simulation and the backpropagation.
+Here, we will give a quick explanation of each of these steps.
+But, before going in, we have to explain what the tree used in \gls{mcts} approach looks like.
+
+A \gls{mcts} tree is a tree as defined in graph theory which is not mandatory to explain here. 
+At the top of the tree, we find the root state, which is the current state of the game, the one for which we search the best action.
+Each node of the tree is a state and nodes are connected by actions. 
+
+\paragraph*{During the selection}
+the algorithm will descend in the tree from node to node, starting from the root node.
+At one point, according to a policy, it will stop on a node corresponding to a state \(s\) and begin the expansion phase.
+
+\paragraph*{The expansion}
+phase corresponds to the addition of a new node on the tree.
+It applies an action \(a \in A_{s}\) chosen according to a policy.
+Then, it adds the resulting state, let's say \(s'\) to the tree.
+
+\paragraph*{The simulation}
+is a Monte-Carlo simulation.
+It is used to evaluate the quality of a node for a given player.
+It consists in playing the game randomly from state \(s'\) until a terminal state is reached.
+No modification is done to the tree.
+The simulation is called a rollout because it is a random playout.
+It follows what is called the default policy which chooses the action uniformly.
+
+\paragraph{The backpropagation}
+is the last phase.
+The result of the rollout is transmitted back to the top of the tree.
+It follows back the way chosen at the selection.
+We can then have statistics on each node which, often, are useful to create the policy used during the selection and expansion.
+
+All theses steps are repeated over and over again.
+The number of repetition is often limited by a search time which is set beforehand.
+Based on the tree obtained at the end, the player can choose which action apply on the root state.
+Often, the search is repeated on a new tree each turn to avoid the algorithm to be stuck on the same strategy.
+erge
+
+
