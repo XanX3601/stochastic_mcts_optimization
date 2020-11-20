@@ -9,3 +9,24 @@ Meaning that, we identify each team by a number and then, team 1 play, then team
 This way, the algorithm can place team one by one.
 It is important to do so because teams can be stacked on the same cell to extinguish it faster or can be spread across the grid to cover the fire.
 
+Each cell \(x \in X\) can be seen as a pair of coordinates \((i, j)\).
+Each cell can then be associated to an index \(k\) such as \(k=(j \times W + i)\).
+As said before each firefighter team \(t \in T\) is associated to a number \(o\) which represents its turn order from \(0\) to \(|T| - 1\).
+So we define the function \textit{code}  as follows:
+
+\[
+    code(x, s_{n}) = k_{x} + (o_{n} + |T|B_{t}(x)) * |X|
+\]
+
+where \(x\) is the cell on which we want to send the next team \(t in T\) and \(s_{t}\) is a state of the game at turn \(n\).
+
+With this definition a code holds three information:
+
+\begin{itemize}
+    \item which cell \(x \in X\) is targeted
+    \item which team is send to the cell
+    \item is the cell burning or not
+\end{itemize}
+
+Therefore, the \gls{snrpa} can make the difference between action for each team of firefighters and action targeting burning cells or not.
+

@@ -50,7 +50,7 @@ It plays \textit{nbPlayout}  playout which is an hyperparameter of the \gls{snrp
 At each turn, it finds the first legal code in the sequence for the current state.
 A code is legal if the action behind is legal and the information on the state the code contains are true for the current state.
 We give more details on codes in section~\ref{ssub:snrpa_code_decode}.
-This may seem cryptic but we will give an example in section \todo{reference section where twm code are explained}.
+This may seem cryptic but we will give an example in section~\ref{sub:how_code_twm_actions}.
 It repeats the process till it reaches a terminal state.
 Finally, it returns the sequence with its expected score.
 
@@ -108,6 +108,6 @@ Therefore, it has a new layer of abstraction.
 It means that the codes must contain all the information needed from the states and actions while encapsulating them.
 A code must contain the consequences the action can have on the state.
 That is why we introduced a \textit{decode} function that give the action hidden behind a code.
-We will give an example of action coding in section \todo{reference twm code section}.
+We will give an example of action coding in section~\ref{sub:how_code_twm_actions}.
 Codes are still the tricky, problem-dependent part of the \gls{snrpa}.
 

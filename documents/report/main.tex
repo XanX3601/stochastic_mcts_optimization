@@ -6,22 +6,39 @@
 \usepackage[acronym]{glossaries}
 \usepackage{todonotes}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
-\usepackage[margin=1in]{geometry}
+\usepackage{geometry}
 \usepackage{amsmath}
 \usepackage{tikzit}
 
 \import{./src/figures/}{test_style.tikzstyles}
 
- \geometry{
- a4paper,
- total={170mm,257mm},
- }
-
 \addbibresource{./src/bibliography.bib}
 
 \import{./src/}{glossary.tex}
 
+\title{Adapt the \acrlong{nrpa} to solve stochastic problem}
+\author{Thomas Petiteau}
+\date{november 20 2020}
+
 \begin{document}
+    \maketitle
+    \clearpage
+
+    \tableofcontents
+    \clearpage
+
+    \section{Introduction}%
+    \label{sec:introduction}
+    
+    The \gls{mcts} is a family of algorithm that have successfully applied to a lot of problems and games \cite{survey_mcts}.
+    In particular, the \gls{nrpa} has been recently used to solve optimization problem such as \gls{tsptwm}\cite{nrpa_tsptw} and it obtains state of the art result on many.
+    It has found new records in Morpion Solitaire and crosswords puzzle.
+    But it only performs well on non stochastic problem which compose a small portion of more practical importance.
+    In this paper, we present an adaptation of the \gls{nrpa} to stochastic context resulting in a new algorithm we call \gls{snrpa}.
+    We will first present the \gls{mcts} and then the \gls{nrpa}. We will then proceed to explain the difficulty of solving stochastic problems with the \gls{nrpa}.
+    Finally, we will introduce the new \gls{snrpa} and we will try it on instances of the \gls{twm} problem with other algorithms to compare their performance.
+    
+
     \import{./src/sections/mcts/}{mcts.tex}
     \clearpage
     \glsresetall{}
@@ -33,9 +50,19 @@
     \glsresetall{}
     \import{./src/sections/twm/}{twm.tex}
     \clearpage
-
-    \printglossary{}
+    \glsresetall{}
+    \import{./src/sections/experiments/}{experiments.tex}
     \clearpage
+
+    \section{Conclusion}%
+    \label{sec:conclusion}
+    
+    In this paper, we presented the \gls{nrpa}, a \gls{mcts} algorithm, giving state of the art results on many optimization problem.
+    We presented the \gls{snrpa}, an adaptation of the \gls{nrpa} to solve stochastic problem.
+    Our results show that the \gls{snrpa} performs very well on the \gls{twm} problem.
+    Future works include the test on other stochastic problems and on non stochastic problems to compare the \gls{snrpa} to the \gls{nrpa} on territory dominated by the \gls{nrpa}.
+    We would also want to present more computational demanding results to see if the gap of performance between the algorithms is more significant.
+
     \printbibliography{}
 \end{document}
 
