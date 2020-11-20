@@ -1,0 +1,41 @@
+\subsection{Stochastic problem and how to solve them}%
+\label{sub:stochastic_problem_and_how_to_solve_them}
+
+A stochastic problem, modelized as a \gls{mdp} (see section~\ref{sub:mdp}) is a \gls{mdp} in which \(P_{a}(s, s') \leq 1\).
+Meaning that the transition between two states \(s\) and \(s'\) by action \(a\) is not guaranteed to succeed.
+Therefore, applying any action to any state may, each time, results in different state.
+
+To be clearer, let's consider a small problem.
+The rules are simple:
+
+\begin{itemize}
+    \item The game is played in a grid of dimension \(W \times H\).
+    \item The player starts on a random cell of the grid.
+    \item Each turn the player can go \textit{up} , \textit{right} , \textit{down} or \textit{left}.
+    \item When choosing a direction, the player may walk one, two or three cells in that direction with a unknown probability.
+    \item The player can not exit the grid and is stuck at the edge if he tries.
+    \item Each turn, the player freeze a bit and gain \(-1\) point.
+    \item An exit is placed on a random cell of the grid.
+    \item The goal is for the player to start a turn on the exit.
+\end{itemize}
+
+Take the time to understand these rules, they are not very complex.
+A state of the game can be represented by the coordinates of the player.
+It is a stochastic or random game because, when applying any action to any states, we do not know which state we can obtain.
+Exception due to states where the player is on the edges of the grid and try to go beyond.
+Now imagine a state where the player is on the next next to the exit.
+If he chooses to go toward the exit he might go beyond it.
+
+The difficulty of a stochastic problem is that a sequence \(S\) of \(n\) actions may not contain enough action to solve the game.
+Furthermore, many stochastic problems, once modelized as a \gls{mdp} tends to posses a very large set of states.
+For some of them, if we were to see the entire tree of the game, the ramification may be too large.
+That is not say that for some non stochastic problem, the number of states is not immensely large.
+In the game of Go, which is not stochastic, the number of state is \(3^{361}\) which is enormous.
+Some problem even have an infinity amount of states.
+
+So the real problem is really the fact that sequence, when applied to a state may not always lead to terminal state.
+Also, in some problems, actions can be illegal so a sequence \(S={a1, a2}\) when applied from state \(s\) might lead to a final state \(s^{*}\) but also to another state for which th\(a2\) is illegal.
+This poses a new problem as to how define a sequence in a stochastic context.
+For some problem, sequences that always lead from root state to a terminal one exists but, in general, it is unlikely.
+Furthermore, we are more interested in solving more difficult problem.
+

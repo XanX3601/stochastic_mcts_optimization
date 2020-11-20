@@ -1,0 +1,43 @@
+\subsection{\acrshort{nrpa}, a story of code}%
+\label{sub:nrpa_a_story_of_code}
+
+As seen in the playout (see section~\ref{sub:nrpa_playout}) and the adapt (see section~\ref{sub:nrpa_adapt}), the \gls{nrpa} uses a function named \textit{code}.
+This function is essential because it changes what the algorithm learns entirely.
+This function takes an action (and can also take a state) and returns a number corresponding to it.
+It can be viewed as an hash function for moves.
+It helps to store the weight inside the policy that can be seen as a list.
+The size of this list will be the number of code possible but that is just one way to see it or implement it.
+
+When we say that it changes the knowledge acquired by the \gls{nrpa} it is undertone.
+Let's consider the \gls{lmp} as defined in section~{sub:mdp} and examine two way of coding the actions.
+
+\[
+    code(a)= 
+    \begin{cases}
+        1 & \text{if } a = left\\
+        0 & \text{otherwise }
+    \end{cases}
+\]
+
+In this first case, the code is produces from the action itself.
+Going to the left is 1 and going to the right is 0.
+This means that there is only 2 codes possible; therefore, their are two weights to adjust.
+The policy will be binary and only learn to go left or right.
+This is very adapted to the problem since the question does not change according to the number of turn already played.
+
+\[
+    code(a, s=(r, d)) = d*2 + 
+    \begin{cases}
+        1 & \text{if } a = left\\
+        0 & \text{otherwise }
+    \end{cases}
+\]
+
+In this second case, there are \(2 \times N\) codes and the same number of weight to adjust.
+This means that, at each level of deepness, the algorithm will wonder if it is better to go left or right.
+If he knows that, at the root level, it is always better to go left, he does not apply it on other levels.
+This is a real problem in the modelization of the problem since it does not capture well what the algorithm have to learn.
+That said, even with this version, it probably find the best solution but in more time.
+
+The codes are an essential part of the \gls{nrpa} since they modelize the knowledge the algorithm is acquiring.
+Bad codes will result in bad learning and bad learning results in bad results.

@@ -1,0 +1,64 @@
+\subsection{Definition of the \acrshort{twm} problem}%
+\label{sub:definition_of_the_twm_problem}
+
+Our modelization is practically the same as the one defined by \citeauthor{comp_mcts_mo}\cite{comp_mcts_mo} with minor changes.
+The \gls{twm} is set on a squared grid of cells \(X\).
+Each cell \(x \in X\) is defined by two attributes:
+
+\begin{itemize}
+    \item \(B(x)\) is a boolean indicating if the cell \(x\) is on fire.
+    \item \(F(x)\) is an integer representing the amount of fuel on cell \(x\). The more fuel, the longer it burns.
+\end{itemize}
+
+A state is then represented by the values of these two attributes for all \(x \in X\).
+A state is considered final when no cell is burning anymore.
+
+We have a set \(T\) of firefighter teams which we consider identical.
+An action consists in placing each team \(t \in T\) setting the attribute \(a^{i} \in X\).
+Every team can be assigned to any cell and can even be assigned to the same cells.
+
+A burning cell consumes its fuel at a constant rate.
+If a cell has no more fuel, it extinguishes.
+The burning rate constitutes the time unite of the game. 
+Meaning that, each turn, all burning cells consume one fuel, therefore:
+
+\[
+    F_{t+1}(x) = 
+    \begin{cases}
+        F_{t}(x)& \text{if } \lnot B_{t}(x) \lor F_{t}(x) = 0\\
+        F_{t}(x) - 1& \text{otherwise }
+    \end{cases}
+\]
+The evolution of the attribute \(B(x)\) is stochastic.
+It is set on a terminal state machine.
+This transition model is given by the following equation defining \(\rho_{1}\) and \(\rho_{2}\) and the figure~\ref{fig:B_state_machine}.
+
+\[
+    \rho_{1} = 
+    \begin{cases}
+        1 - \Pi_{y}(1 - P(x, y)B_{t}(x))& \text{if } F_{t}(x) > 0\\
+        0& \text{otherwise }
+    \end{cases}
+\]
+\[
+    \rho_{2} = 
+    \begin{cases}
+        1& \text{if } F_{t}(x) = 0\\
+        1 - \Pi_{i}(1 - S(x)\delta_{x}(a^{i}))& \text{otherwise }
+    \end{cases}
+\]
+
+\begin{figure}[htpb]
+    \ctikzfig{../../../figures/B_state_machine}
+    \caption{\(B(x)\) transition model}%
+    \label{fig:B_state_machine}
+\end{figure}
+
+\(P(x, y)\) represents the probability that \(y\) ignites \(x\) if \(y\) is burning.
+We will only consider case where only neighbors cell can ignite each other.
+\(S(x)\) is the probability that a firefighter team extinguish the cell \(x\).
+\(\delta_{x}(a^{i})\) equals \(1\) if firefighter team \(i\) has been placed on cell \(x\) and \(0\) otherwise.
+
+The reward \(R(x)\) is always negative and is the cost of the fire on cell \(x\).
+The reward at time \(t\) is therefore \(\Sigma_{x \in X} B_{t}(x)R(x)\).
+The score of a final state is the sum of all rewards.

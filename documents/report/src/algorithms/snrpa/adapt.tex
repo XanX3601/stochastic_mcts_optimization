@@ -16,10 +16,8 @@
 
     \Adapt{\Policy, \Sequence}\\
 
-    \Polp $\leftarrow$ \Policy\\
-
     \For{$codeIndex \leftarrow 0$ \KwTo \Sequence.\Size{} - 2} {
-        \Polp[\Sequence[$codeIndex$]] $\leftarrow$ \Polp[\Sequence[$codeIndex$]] + $\alpha$\\
+        \Policy[\Sequence[$codeIndex$]] $\leftarrow$ \Policy[\Sequence[$codeIndex$]] + $\alpha$\\
         \Z $\leftarrow$ 0.0\\
 
         \For{$codeIndexBis \leftarrow codeIndex$ \KwTo \Sequence.\Size{}} {
@@ -27,11 +25,10 @@
         }
 
         \For{$codeIndexBis \leftarrow codeIndex$ \KwTo \Sequence.\Size{}} {
-            \Polp[\Sequence[$codeIndexBis$]] $\leftarrow$ \Polp[\Sequence[$codeIndexBis$]]  $-\alpha$ * $\frac{\Exp{\Policy[\Sequence[codeIndexBis]]}}{\Z}$\\
+            \Policy[\Sequence[$codeIndexBis$]] $\leftarrow$ \Policy[\Sequence[$codeIndexBis$]]  $-\alpha$ * $\frac{\Exp{\Policy[\Sequence[codeIndexBis]]}}{\Z}$\\
         }
     }
 
-    \Policy $\leftarrow$ \Polp
-
     \caption{The \acrshort{snrpa} adapt algorithm}
+    \label{alg:snrpa_adapt}
 \end{algorithm}

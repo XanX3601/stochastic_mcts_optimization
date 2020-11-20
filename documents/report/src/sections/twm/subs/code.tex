@@ -1,0 +1,11 @@
+\subsection{How code \acrshort{twm} actions}%
+\label{sub:how_code_twm_actions}
+
+In this section we will discuss of how we codify actions for the \gls{twm} as defined in section~\ref{sub:definition_of_the_twm_problem}.
+The \gls{twm} is a multi-agent problem. 
+Each team of firefighter can be control on their own.
+We decided to have them play in sequence and not in parallel.
+Meaning that, we identify each team by a number and then, team 1 play, then team 2, etc\dots
+This way, the algorithm can place team one by one.
+It is important to do so because teams can be stacked on the same cell to extinguish it faster or can be spread across the grid to cover the fire.
+

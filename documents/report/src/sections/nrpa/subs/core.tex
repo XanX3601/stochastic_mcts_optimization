@@ -1,0 +1,24 @@
+\subsection{\acrshort{nrpa} core algorithm}%
+\label{sub:nrpa_core}
+
+The core function of the \gls{nrpa} aims to learn a policy in order to find the best sequence it can.
+The algorithm is given in algorithm~\ref{alg:nrpa}.
+It is a recursive function taking a level and a policy and returning a sequence alongside its score.
+Each level greater than 0 learns a policy and search a sequence.
+At level 0, the function computes a rollout according to the policy it received.
+Each level obtain \(N\) sequence by recursive calls.
+The best sequence is stored and, at each step, the policy is adapted to it.
+
+To give more details, the algorithm starts by checking its level and, if it is zero, it computes a playout (line 2-4).
+If the level is greater, it performs \(N\) iterations (line 6).
+It obtains a new sequence by recursive call (line 7) and proceeds to compare it to the best known one (line 8-11).
+The policy received by copy (it is important to mention it because otherwise, nesting the call would have no use) is then adapted to the best sequence (line 12).
+
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{.7\linewidth}
+        \subimport{../../../algorithms/nrpa/}{nrpa.tex}
+    \end{minipage}
+\end{figure}
+
+

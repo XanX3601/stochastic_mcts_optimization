@@ -1,0 +1,28 @@
+\subsection{\acrshort{nrpa} adapt}%
+\label{sub:nrpa_adapt}
+
+The \gls{nrpa} adapt algorithm is used to adapt a policy to a given sequence.
+We explained in section \ref{sub:nrpa_playout} that the policy is used during rollout to select actions and generate sequence.
+Adapt a policy \(\pi\) to a sequence \(S\) means to give the policy a greater tendency to generate \(S\).
+More formerly, is \(\Omega\) is the state of all sequences, then a policy \(\pi\) can be seen as a probability distribution over \(\Omega\).
+If \(\pi\) is adapted to \(S\) resulting in \(\pi'\) then \(P(S|\pi) \leq P(S|\pi')\).
+
+The adapt algorithm is given in algorithm~\ref{alg:nrpa_adapt}.
+The algorithm starts by copying the policy (line 2) which can be avoided as explained with the generalized form of the \gls{nrpa}\cite{gnrpa}.
+Then, for each move of the sequence (line 4), it starts by increasing the weight associated to the current move (line 5).
+Next, it computes the sum of weights, taken to the exponential, of all legal moves for the current state (line 7-9).
+Finally, it updates the weight of all considered actions according to the exponential of their weight divided by the sum (line 10-12).
+The sum of weights is important to maintain the sum of probability to 1.
+
+The adapt algorithm use a argument \(\alpha\) that represents the learning step of the adapt algorithm.
+The bigger it is, the more closer the policy will be to the sequence after it has been adapted.
+\(\alpha\) is problem-dependent and must be tune in order to obtain the best possible results.
+It represents one of the difficulty of the \gls{nrpa}.
+
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{.7\linewidth}
+        \subimport{../../../algorithms/nrpa/}{adapt.tex}
+    \end{minipage}
+\end{figure}
+

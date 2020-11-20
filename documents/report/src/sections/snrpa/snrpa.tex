@@ -1,0 +1,19 @@
+\section{Adapt the \acrshort{nrpa} to stochastic problem}%
+\label{sec:adapt_the_nrpa_to_stochastic_problem}
+
+As explained in section \ref{sec:the_nrpa}, the \gls{nrpa} is an algorithm that obtains state of the art results on different optimization problem.
+All these problems have in common to be non stochastic problem.
+It means that if we apply action \(a\) on state \(s\) and we obtain the state \(s'\) then, when repeating the same process, we will always obtain \(s'\).
+In a stochastic context, this assurance does not exist.
+Meaning that, when applying \(a\) on \(s\) we may obtain \(s'\) but also \(s^{*}\) or \(s''\)  or any others, depending on the problem.
+
+In this section, we are going to present how we tried to adapt the \gls{nrpa} to solve stochastic problem.
+We will first discuss a bit more what a stochastic problem is by considering a small example in order to highlight the difficulty to solve one.
+Then we will explain why the \gls{nrpa} is not well suited to solve this kind of problem by identifying the main issues.
+Then, we will present how we attended to these issues by explaining our new algorithm the \gls{snrpa}.
+
+\subimport{./subs/}{stochastic.tex}
+\subimport{./subs/}{nrpa.tex}
+\subimport{./subs/}{snrpa.tex}
+
+

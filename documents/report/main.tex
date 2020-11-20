@@ -1,18 +1,20 @@
-\documentclass{article}
+\documentclass[12pt]{article}
 
 \usepackage[english]{babel}
 \usepackage{biblatex}
 \usepackage{import}
 \usepackage[acronym]{glossaries}
 \usepackage{todonotes}
-\usepackage[ruled,vlined]{algorithm2e}
-\usepackage{geometry}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{tikzit}
+
+\import{./src/figures/}{test_style.tikzstyles}
 
  \geometry{
  a4paper,
  total={170mm,257mm},
- left=20mm,
- top=20mm,
  }
 
 \addbibresource{./src/bibliography.bib}
@@ -21,9 +23,19 @@
 
 \begin{document}
     \import{./src/sections/mcts/}{mcts.tex}
+    \clearpage
+    \glsresetall{}
     \import{./src/sections/nrpa/}{nrpa.tex}
+    \clearpage
+    \glsresetall{}
+    \import{./src/sections/snrpa/}{snrpa.tex}
+    \clearpage
+    \glsresetall{}
+    \import{./src/sections/twm/}{twm.tex}
+    \clearpage
 
-    \printglossaries{}
+    \printglossary{}
+    \clearpage
     \printbibliography{}
 \end{document}
 
