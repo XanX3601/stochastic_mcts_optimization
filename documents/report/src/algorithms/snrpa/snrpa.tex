@@ -1,0 +1,39 @@
+\begin{algorithm}
+    \SetKwData{Level}{level}
+    \SetKwData{Policy}{policy}
+    \SetKwData{BestScore}{bestScore}
+    \SetKwData{Result}{result}
+    \SetKwData{New}{new}
+    \SetKwData{Seq}{seq}
+    \SetKwData{Root}{root}
+    \SetKwData{N}{N}
+
+    \SetKwFunction{Snrpa}{SNRPA}
+    \SetKwFunction{Playout}{playout}
+    \SetKwFunction{Adapt}{adapt}
+    
+    \SetAlgoLined{}
+
+    \Snrpa{\Level, \Policy}\\
+
+    \If{\Level $==$ 0} {
+        \Return{\Playout{\Root, \Policy}}
+    }
+
+    \BestScore $\leftarrow$ $-\infty$\\
+
+    \For{\N iterations} {
+        (\Result, \New) $\leftarrow$ \Snrpa{\Level - 1, \Policy}\\
+
+        \If {\Result $\geq$ \BestScore} {
+            \BestScore $\leftarrow$ \Result\\
+            \Seq $\leftarrow$ \New\\
+        }
+
+        \Policy $\leftarrow$ \Adapt{\Policy, \Seq}\\
+    }
+
+    \Return{\BestScore, \Seq}
+
+    \caption{The \acrshort{snrpa} algorithm}
+\end{algorithm}

@@ -1,0 +1,40 @@
+\begin{algorithm}
+    \SetKwData{Sequence}{sequence}
+    \SetKwData{Policy}{policy}
+    \SetKwData{State}{state}
+    \SetKwData{CopyState}{copyState}
+    \SetKwData{NbPlayout}{nbPlayout}
+    \SetKwData{SumScore}{sumScore}
+    \SetKwData{Score}{score}
+    \SetKwData{Code}{code}
+    \SetKwData{Move}{move}
+
+    \SetKwFunction{Playout}{playout}
+    \SetKwFunction{GenerateSequence}{generateSequence}
+    \SetKwFunction{Decode}{decode}
+    \SetKwFunction{Play}{play}
+    \SetKwFunction{Score}{score}
+
+    \SetAlgoLined{}
+
+    \Playout{\State, \Policy}\\
+    \Sequence $\leftarrow$ \GenerateSequence{\Policy}\\
+    \SumScore $\leftarrow$ 0\\
+
+    \For{$i\leftarrow 0$ \KwTo \NbPlayout} {
+        \CopyState $\leftarrow$ \State\\
+
+        \While{\CopyState is not terminal} {
+            \Code $\leftarrow$ choose the first legal $code$ in \Sequence\\
+            \Move $\leftarrow$ \Decode{\Code}\\
+            \CopyState $\leftarrow$ \Play{\CopyState, \Move}\\
+        }
+
+        \SumScore $\leftarrow$ \SumScore + \Score{\CopyState}\\
+    }
+
+    \Score $\leftarrow$ \SumScore / \NbPlayout\\
+    \Return{(\Score, \Sequence)}
+
+    \caption{The \acrshort{snrpa} playout algorithm}
+\end{algorithm}

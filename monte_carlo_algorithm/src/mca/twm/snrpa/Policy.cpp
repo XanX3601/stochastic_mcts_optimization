@@ -108,20 +108,5 @@ mca::twm::snrpa::Sequence mca::twm::snrpa::Policy::generate_sequence() const {
         }
     }
 
-    for (int code_index = 0; code_index < each_code_weight.size(); ++code_index) {
-        int code = index_to_code(code_index);
-        int found = 0;
-
-        for (auto sequence_code : sequence_codes) {
-            if (sequence_code == code) {
-                found++;
-            }
-        }
-
-        if (found != 1) {
-            std::cout << "ALERT" << std::endl;
-        }
-    }
-
     return {sequence_codes};
 }

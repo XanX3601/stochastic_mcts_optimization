@@ -1,0 +1,34 @@
+\subsection{the \gls{nrpa} in a stochastic context}
+\label{sub:snrpa_design_process}
+
+As seen in the section \todo{fill the reference to nrpa definition section} \ref{}, the \gls{nrpa} learns a policy while finding the best sequence of move possible.
+Using a policy, it generates a sequence and set its score to equal the score obtained when reaching a final state in the playout.
+It then stores the sequence with the highest score and adapt its policy so it tends to generate this sequence more often.
+In a stochastic context, this strategy is problematic on different levels:
+
+\begin{enumerate}
+    \item a sequence of moves can obtain a high score by fluke.
+    \item a given move may be illegal in certain state.
+    \item a state may never be encountered again due to its low probability.
+\end{enumerate}
+
+The first point may be easy to fix as a given sequence can be used in a new playout.
+It is then possible to compute several playout for a unique sequence allowing us to compute an average score.
+A mean score is preferable when dealing with stochastic problem as it tends to capture the best possible outcome.
+Using average score has already been used with success in algorithm such as \gls{uct}\cite{uct}.
+
+The second point is more delicate.
+Given a sequence \(S=\{(s1, a1), (s2, a2), \dots \} \)which starts by using action, or move, \(a1\) on state \(s1\) to obtain state \(s2\).
+In a stochastic context, the probability to have \(s2\) when applying \(a1\) to \(s1\) may not equal 1; therefore, any sequence of state and actions may not be reproducible.
+Even if we consider only the actions such as \(S=\{a1, a2, a3, \dots\}\) then we may obtain states in which some actions are illegal.
+If such a case occur then, not only the sequence is not reproducible but it is also not usable.
+The idea of sequence must be changed entirely if we want to use it in a stochastic context.
+
+The third point concerns the concept of policy.
+A policy gives a probability distribution over actions for a given state.
+In a stochastic problem, the number of states can be quite large and a hundred playout might never see the same states.
+Therefore, learning probabilities over actions for each state may never give any results as each state could be seen one and one time only.
+This type of policy is not an option as it is unlikely to give any knowledge to the algorithm.
+
+These three points are, for us, the main concerns about \gls{nrpa} in a stochastic concern.
+We tried to address them by designing the \gls{snrpa}.

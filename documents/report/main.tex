@@ -3,11 +3,27 @@
 \usepackage[english]{babel}
 \usepackage{biblatex}
 \usepackage{import}
+\usepackage[acronym]{glossaries}
+\usepackage{todonotes}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{geometry}
 
-\addbibresource{./bibliography.bib}
+ \geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=20mm,
+ top=20mm,
+ }
+
+\addbibresource{./src/bibliography.bib}
+
+\import{./src/}{glossary.tex}
 
 \begin{document}
+    \import{./src/sections/nrpa/}{nrpa.tex}
+    \import{./src/sections/snrpa/}{snrpa.tex}
 
+    \printglossaries{}
     \printbibliography{}
 \end{document}
 
