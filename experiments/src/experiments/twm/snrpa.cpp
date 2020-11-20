@@ -54,7 +54,7 @@ void experiments::twm::snrpa::solve_problem_1(int grid_size, int team_count, int
             int solve_highest_reward = p_board->highest_possible_reward();
             int solve_action_count = 0;
             std::string solve_sequence_file_path =
-                fmt::format("{}/solve{}_sequences.csv", dir_sequence_path, solve_index);
+                fmt::format("{}/solve{}_sequences", dir_sequence_path, solve_index);
 
             std::random_device random_device;
             std::mt19937 generator(random_device());
@@ -77,7 +77,8 @@ void experiments::twm::snrpa::solve_problem_1(int grid_size, int team_count, int
 
                 board = board.get_next_board(action);
 
-                result.save_to_csv(solve_sequence_file_path);
+                result.save_to_csv(
+                    fmt::format("{}_{}.csv", solve_sequence_file_path, solve_action_count));
 
                 solve_action_count++;
 
