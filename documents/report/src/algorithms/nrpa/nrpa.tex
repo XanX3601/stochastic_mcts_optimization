@@ -1,0 +1,40 @@
+\begin{algorithm}[H]
+    \SetKwData{Level}{level}
+    \SetKwData{Policy}{policy}
+    \SetKwData{BestScore}{bestScore}
+    \SetKwData{Result}{result}
+    \SetKwData{New}{new}
+    \SetKwData{Seq}{seq}
+    \SetKwData{Root}{root}
+    \SetKwData{N}{N}
+
+    \SetKwFunction{Nrpa}{NRPA}
+    \SetKwFunction{Playout}{playout}
+    \SetKwFunction{Adapt}{adapt}
+    
+    \SetAlgoLined{}
+
+    \Nrpa{\Level, \Policy}\\
+
+    \If{\Level $==$ 0} {
+        \Return{\Playout{\Root, \Policy}}
+    }
+
+    \BestScore $\leftarrow$ $-\infty$\\
+
+    \For{\N iterations} {
+        (\Result, \New) $\leftarrow$ \Nrpa{\Level - 1, \Policy}\\
+
+        \If {\Result $\geq$ \BestScore} {
+            \BestScore $\leftarrow$ \Result\\
+            \Seq $\leftarrow$ \New\\
+        }
+
+        \Policy $\leftarrow$ \Adapt{\Policy, \Seq}\\
+    }
+
+    \Return{\BestScore, \Seq}
+
+    \caption{The \acrshort{nrpa} algorithm}
+    \label{alg:nrpa}
+\end{algorithm}

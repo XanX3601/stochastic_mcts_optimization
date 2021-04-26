@@ -1,0 +1,33 @@
+\begin{algorithm}[H]
+    \SetKwData{Policy}{policy}
+    \SetKwData{Sequence}{sequence}
+    \SetKwData{NumberCode}{numberCode}
+    \SetKwData{Z}{z}
+    \SetKwData{Code}{code}
+
+    \SetKwFunction{GenerateSequence}{generateSequence}
+    \SetKwFunction{Exp}{exp}
+    
+    \SetAlgoLined{}
+
+    \GenerateSequence{\Policy}\\
+    \Sequence $\leftarrow$ []\\
+
+    \For{$i \leftarrow 0$ \KwTo \NumberCode} {
+         \Z $\leftarrow$ 0.0\\
+
+        \For{$code$ in possible codes} {
+            \If{$code$ is not in \Sequence} {
+                \Z $\leftarrow$ \Z + \Exp{\Policy[$code$]}\\
+            }
+        }   
+
+        \Code $\leftarrow$ choose a $code$ not in \Sequence with probability $\frac{\Exp{\Policy[$code$]}}{\Z}$\\
+        \Sequence $\leftarrow$ \Sequence + \Code
+    }
+
+    \Return{\Sequence}
+
+    \caption{The \acrshort{snrpa} generate sequence}
+    \label{alg:snrpa_generate}
+\end{algorithm}

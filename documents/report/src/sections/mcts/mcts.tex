@@ -1,0 +1,18 @@
+\section{\acrlong{mcts} algorithm}%
+\label{sec:mcts_algorithm}
+
+\gls{mcts} algorithm is a family of algorithm based on Monte-Carlo simulations and a tree seach procedure.
+Monte-Carlo simulations were first used in 1993~\cite{mcgo} for the game of Go.
+In 2006~\cite{uct}, \gls{mcts} most popular algorithm called \gls{uct} was introduced.
+It used multi armed bandit in the tree search procedure to keep a balance between exploitation and exploration of the tree.
+Which, respectively means to study more a well known and good strategy and explore new stategies.
+Nowadays, \gls{mcts} algorithms have been used in many domains~\cite{survey_mcts} and still give state of the art result in many of them.
+For example, it is a core component of algorithms such as AlphaZero~\cite{alphazero}.
+
+Here, we are interested in solving optimization problems, that can also be seen as games or puzzle.
+Moreover, we have a particular interest in stochastic problems.
+In this section, we will discuss the different classic components of a \gls{mcts} algorithm.
+We will first discuss the preliminaries to understand the \gls{mcts}.
+
+\subimport{./subs/}{mdp.tex}
+\subimport{./subs/}{key_components.tex}

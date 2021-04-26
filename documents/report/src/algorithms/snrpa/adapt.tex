@@ -1,0 +1,34 @@
+\begin{algorithm}[H]
+    \SetKwData{Sequence}{sequence}
+    \SetKwData{Policy}{policy}
+    \SetKwData{Polp}{polp}
+    \SetKwData{State}{state}
+    \SetKwData{Root}{root}
+    \SetKwData{Z}{z}
+
+    \SetKwFunction{Adapt}{adapt}
+    \SetKwFunction{Code}{code}
+    \SetKwFunction{Exp}{exp}
+    \SetKwFunction{Play}{play}
+    \SetKwFunction{Size}{size}
+    
+    \SetAlgoLined{}
+
+    \Adapt{\Policy, \Sequence}\\
+
+    \For{$codeIndex \leftarrow 0$ \KwTo \Sequence.\Size{} - 2} {
+        \Policy[\Sequence[$codeIndex$]] $\leftarrow$ \Policy[\Sequence[$codeIndex$]] + $\alpha$\\
+        \Z $\leftarrow$ 0.0\\
+
+        \For{$codeIndexBis \leftarrow codeIndex$ \KwTo \Sequence.\Size{}} {
+            \Z $\leftarrow$ \Exp{\Policy[\Sequence[$codeIndexBis$]]}\\
+        }
+
+        \For{$codeIndexBis \leftarrow codeIndex$ \KwTo \Sequence.\Size{}} {
+            \Policy[\Sequence[$codeIndexBis$]] $\leftarrow$ \Policy[\Sequence[$codeIndexBis$]]  $-\alpha$ * $\frac{\Exp{\Policy[\Sequence[codeIndexBis]]}}{\Z}$\\
+        }
+    }
+
+    \caption{The \acrshort{snrpa} adapt algorithm}
+    \label{alg:snrpa_adapt}
+\end{algorithm}

@@ -1,0 +1,37 @@
+\begin{algorithm}[H]
+    \SetKwData{Sequence}{sequence}
+    \SetKwData{State}{state}
+    \SetKwData{Policy}{policy}
+    \SetKwData{Move}{move}
+    \SetKwData{Z}{z}
+
+    \SetKwFunction{Playout}{playout}
+    \SetKwFunction{Score}{score}
+    \SetKwFunction{Exp}{exp}
+    \SetKwFunction{Code}{code}
+    \SetKwFunction{Play}{play}
+    
+    \SetAlgoLined{}
+
+    \Playout{\State, \Policy}\\
+    \Sequence $\leftarrow$ []\\
+
+    \While{true} {
+        \If {\State is terminal} {
+            \Return{(\Score(\State), \Sequence)}
+        }
+
+        \Z $\leftarrow$ 0.0\\
+
+        \For{$m$ in possible moves for \State} {
+            \Z $\leftarrow$ \Z + \Exp{\Policy[\Code{$m$}]}\\
+        }
+
+        \Move $\leftarrow$ choose a $move$ with probability $\frac{\Exp{\Policy[\Code{move}]}}{\Z}$\\
+        \State $\leftarrow$ \Play{\State, \Move}\\
+        \Sequence $\leftarrow$ \Sequence + \Move\\
+    }
+
+    \caption{The \acrshort{nrpa} playout algorithm}
+    \label{alg:nrpa_playout}
+\end{algorithm}

@@ -1,0 +1,113 @@
+\subsection{The \acrlong{snrpa}}%
+\label{sub:the_snrpa}
+
+In this section, we will present our new algorithm called the \gls{snrpa}.
+It is an adaptation of the \gls{nrpa} to solve stochastic problem.
+It tends to the issues we highlighted in section~\ref{sub:the_nrpa_to_solve_stochastic_problem} while still keeping the key concepts of the \gls{nrpa}.
+In the rest of this section, we will present the different algorithm composing the \gls{snrpa} and will explain them.
+
+\subsubsection{\acrshort{snrpa} generate sequence}%
+\label{ssub:snrpa_sequence_generation}
+
+The \gls{nrpa} generates its sequences through one and only one playout.
+Therefore it can generate and evaluate the sequence in the same time.
+We will see in section~\ref{ssub:srnpa_playout} that the \gls{snrpa} evaluates sequence differently.
+We then decided to split the two process.
+
+In the \gls{snrpa} a sequence is an ordered list of codes containing all possible codes.
+A sequence is generated from a policy that define a weight for each possible codes.
+The sequence is created by random sampling without replacement so that the codes appear one and only once in each sequence.
+
+The algorithm to generate the sequence is given in algorithm \ref{alg:snrpa_generate}.
+The algorithm starts by initializing the sequence to build (line 2).
+Then it will repeat a random sampling on all the codes (line 3).
+To sample, it first compute the sum of exponential weights of all codes that are not yet in the sequence (line 5-9).
+Then it picks a code among the ones not in the sequence according to the exponential of the weight divided by the sum it just computed.
+Finally, it adds the chosen code to the sequence.
+
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{.7\linewidth}
+        \subimport{../../../algorithms/snrpa/}{generate_sequence.tex}
+    \end{minipage}
+\end{figure}
+
+We changed the concept of the sequence to attend to the issue presented in section~\ref{ssub:a_sequence_of_action_in_stochastic_context}.
+A sequence being a list of all codes, it contains every possible actions in a way.
+We will see in section~\ref{ssub:srnpa_playout} that the way to use sequence has also changed.
+
+\subsubsection{\acrshort{snrpa} playout}%
+\label{ssub:srnpa_playout}
+
+The playout function is used to evaluate a sequence.
+To avoid any random high score, we compute an average for the sequence by computing its score on multiple playout.
+The score attached to the sequence is then its expected score.
+
+The algorithm for the playout is given in algorithm~\ref{alg:snrpa_playout}.
+It starts by generating the sequence to evaluate (line 2).
+Then it continues by computing the average score for the sequence (line 3-4).
+It plays \textit{nbPlayout}  playout which is an hyperparameter of the \gls{snrpa}.
+At each turn, it finds the first legal code in the sequence for the current state.
+A code is legal if the action behind is legal and the information on the state the code contains are true for the current state.
+We give more details on codes in section~\ref{ssub:snrpa_code_decode}.
+This may seem cryptic but we will give an example in section~\ref{sub:how_code_twm_actions}.
+It repeats the process till it reaches a terminal state.
+Finally, it returns the sequence with its expected score.
+
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{.7\linewidth}
+        \subimport{../../../algorithms/snrpa/}{playout.tex}
+    \end{minipage}
+\end{figure}
+
+\subsubsection{\acrshort{snrpa} adapt policy}%
+\label{ssub:snrpa_adapt_policy}
+
+Adapting a policy to a sequence is a similar process in both the \gls{nrpa} and the \gls{snrpa}.
+It increases the weight of codes at the beginning of the sequence and reduce the weights of codes at the end.
+To say it otherwise, the more to the left a code is in the sequence, the more its weight will increase.
+It firstly adapt the policy to the entire sequence before repeating the process without considering the first code and so on.
+
+The adapt algorithm is given in algorithm~\ref{alg:snrpa_adapt}.
+It iterates through the sequence index from 0 (the beginning) till the penultimate one (line 2).
+It then increases the weight of the current code in the sequence (line 3).
+Then computes the sum of the exponential of the weights of all codes to the right of the current code in the sequence (line 5-7).
+Finally it decreases the weight of the same codes according to the exponential of their weight divided by the sum (line 8-10).
+
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{.7\linewidth}
+        \subimport{../../../algorithms/snrpa/}{adapt.tex}
+    \end{minipage}
+\end{figure}
+
+This function could be written as a recursive one calling itself once the update is done with the sequence minus its first code.
+Since the sequence contains all the codes, there is no need for a copy of the policy like in the adapt algorithm of the \gls{nrpa} (see section~\ref{sub:nrpa_adapt}).
+
+\subsubsection{\acrshort{snrpa} core function}%
+\label{ssub:snrpa_core_function}
+
+The core function of the \gls{snrpa} is the same as the \gls{nrpa}'s one.
+The algorithm is still given in algorithm~\ref{alg:snrpa_core}.
+Please see section~\ref{sub:nrpa_core} for more details on this function.
+
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{.7\linewidth}
+        \subimport{../../../algorithms/snrpa/}{snrpa.tex}
+    \end{minipage}
+\end{figure}
+
+\subsubsection{\acrshort{snrpa} code and decode}%
+\label{ssub:snrpa_code_decode}
+
+The \gls{snrpa} relies a lot on the \textit{code} and a new \textit{decode} functions.
+While the \gls{nrpa} is on the level of states and actions, the \gls{snrpa} is on the code level.
+Therefore, it has a new layer of abstraction.
+It means that the codes must contain all the information needed from the states and actions while encapsulating them.
+A code must contain the consequences the action can have on the state.
+That is why we introduced a \textit{decode} function that give the action hidden behind a code.
+We will give an example of action coding in section~\ref{sub:how_code_twm_actions}.
+Codes are still the tricky, problem-dependent part of the \gls{snrpa}.
+

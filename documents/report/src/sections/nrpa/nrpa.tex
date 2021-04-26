@@ -1,0 +1,21 @@
+\section{The \acrlong{nrpa}}%
+\label{sec:the_nrpa}
+
+The \gls{nrpa}\cite{nrpa} is a \gls{mcts} algorithm that has been used to solve optimization problem with state of the art results like the \gls{tsptwm}\cite{nrpa_tsptw}.
+Howether, it is not a traditional \gls{mcts} algorithm as it does not follow the classic steps of these algorithms: selection, expansion, simulation and backpropagation (see section~\ref{sub:key_components_of_a_mcts}).
+Even the tree procedure is very different from other \gls{mcts} algorithm.
+The \gls{nrpa} learns a playout policy used during the rollouts.
+Actions are associated to weights and sampled during rollout according to the exponential of this same weight.
+Doing so, it find the best sequence of actions it can and modifiy its policy to adapt it to the best known sequence.
+In the end, it returns the best sequence found.
+
+This algorithm is very effective to solve non stochastic optimization problem and has found new records for game like Morpion Solitaire.
+In this section, we will explain the \gls{nrpa} in three parts: the playout, the adaptation and the core function.
+
+\subimport{./subs/}{playout.tex}
+\subimport{./subs/}{adapt.tex}
+\subimport{./subs/}{core.tex}
+\subimport{./subs/}{code.tex}
+
+
+

@@ -1,0 +1,52 @@
+\subsection{The \acrshort{nrpa} to solve stochastic problem}%
+\label{sub:the_nrpa_to_solve_stochastic_problem}
+
+Let's consider the \gls{nrpa} as described in the section~\ref{sec:the_nrpa} and apply it to stochastic problem.
+Obviously, the \gls{nrpa} is not suited for this king of problem.
+But we want to highlight the main issues to explain how we try to attend to them.
+In the rest of this section, we will separate each issue and open the discussion around them.
+We will also present different ideas that we had to fix them.
+
+\subsubsection{A sequence of action in stochastic context?}%
+\label{ssub:a_sequence_of_action_in_stochastic_context}
+
+The first issue we pointed in section~\ref{sub:stochastic_problem_and_how_to_solve_them} is the fact that sequence are not certain anymore.
+The \gls{nrpa} aims to find the best sequence possible that start from root to any terminal state.
+But if a sequence may not lead to the same outcome, or worst, happen to lead to illegal actions, it is a real problem.
+
+The concept of sequence is therefore dangerous to use in stochastic problem as they tend to not have optimal sequence or policy.
+
+\subsubsection{Evaluation of a sequence}%
+\label{ssub:evaluation_of_a_sequence}
+
+The \gls{nrpa} evaluates its sequences by Monte-Carlo simulation in its playout (see section~\ref{sub:nrpa_playout}).
+It attaches the result of the simulation which follows a policy to the sequence it evaluates.
+Storing the best sequence it finds, the \gls{nrpa} tends to be stubborn.
+Once it has found a good sequence, its policy will generate similar sequences.
+It might never find a better sequence because it will be stuck on exploitation of the best known sequence.
+This allows to perform very well in non stochastic problem as a sequence always produce the same results.
+
+Evaluate a sequence of a stochastic problem might result in a high score just by fluke.
+If it happens, then the algorithm might stuck to this sequence which is just badly evaluate because the expected reward of the sequence may be very different.
+
+\subsubsection{Policy over action for a given state}%
+\label{ssub:policy_over_action_for_a_given_state}
+
+The basic policy of the \gls{nrpa} gives probability distribution over actions for every state.
+Of course, as seen in section~\ref{sub:nrpa_a_story_of_code} it really depends on the definition given to the \textit{code}  function.
+But, a stochastic problem may present states that are not often meet.
+You may very well encounter states one and only time due to the low probability in the transition between states and the size of the state space.
+Therefore, coding your action based on too much information from the state is a bad idea because the algorithm might not learn anything at all.
+
+The codes must then contains global information on the current state.
+Even better, they should capture the nature of the action and its consequences on any state.
+
+\subsubsection{Summary}%
+\label{ssub:summary}
+
+The \gls{nrpa} is a very precise algorithm based on the fact that sequence can be replayed and always give the same results.
+It seems to lack a layer of abstraction necessary when dealing with stochastic problem.
+Indeed, these problems place the player in new state and situation they might never have encountered before.
+Therefore, their knowledge must, in some way, be useful to them in any given situation.
+That is a point the \gls{nrpa} misses depending on how coded the actions are.
+

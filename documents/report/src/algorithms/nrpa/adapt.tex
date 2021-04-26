@@ -1,0 +1,40 @@
+\begin{algorithm}[H]
+    \SetKwData{Sequence}{sequence}
+    \SetKwData{Policy}{policy}
+    \SetKwData{Polp}{polp}
+    \SetKwData{State}{state}
+    \SetKwData{Root}{root}
+    \SetKwData{Z}{z}
+
+    \SetKwFunction{Adapt}{adapt}
+    \SetKwFunction{Code}{code}
+    \SetKwFunction{Exp}{exp}
+    \SetKwFunction{Play}{play}
+    
+    \SetAlgoLined{}
+
+    \Adapt{\Policy, \Sequence}\\
+
+    \Polp $\leftarrow$ \Policy\\
+    \State $\leftarrow$ \Root\\
+
+    \For{$move$ in \Sequence} {
+        \Polp[\Code[$move$]] $\leftarrow$ \Polp[\Code{$move$}] + $\alpha$\\
+        \Z $\leftarrow$ 0.0\\
+
+        \For{$m$ in possible moves for \State} {
+            \Z $\leftarrow$ \Exp{\Policy[\Code{$m$}]}\\
+        }
+
+        \For{$m$ in possible moves for \State} {
+            \Polp[\Code{$m$}] $\leftarrow$ \Polp[\Code{$m$}] - $\alpha$ * $\frac{\Exp{\Policy[\Code{m}]}}{\Z}$\\
+        }
+
+        \State $\leftarrow$ \Play{\State, $move$}\\
+    }
+
+    \Policy $\leftarrow$ \Polp
+
+    \caption{The \acrshort{nrpa} adapt algorithm}
+    \label{alg:nrpa_adapt}
+\end{algorithm}

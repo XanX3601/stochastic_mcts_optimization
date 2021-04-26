@@ -1,0 +1,65 @@
+\subsection{\acrlong{mdp}}%
+\label{sub:mdp}
+
+Optimization problem solved using \gls{mcts} algorithm are modelised as a \gls{mdp}.
+it modelises the problem as a set of states and actions that can be applies or played on a state.
+A state contains all the information necessary to understand the situation meaning that the past state are irrelevant.
+In this section, we will give a vulgarize explanation of what a game is and a more definition of a \gls{mdp}.
+
+\subsubsection{Sequential problem modelization}%
+\label{ssub:sequential_problem_modelization}
+
+Let's consider a single player basic game called the \gls{lmp}.
+Its rules are simple:
+
+\begin{itemize}
+    \item Each turn the player can choose \textit{left}  or \textit{right}.
+    \item A player choosing \textit{left} gain one point.
+    \item A player choosing \textit{right} gain no point.
+    \item The game ends after \(N\) turn.
+\end{itemize}
+
+The goal of the game is to have as much point as possible at the end.
+It is a very simple problem but is perfect to explaine the key concept.
+A state of the game can be represented by two elements: the score of the player and the number of turn that passed.
+So if we define the state \(s=(6, 10)\) it means that the player has 6 points and has played 10 turns.
+Past states are irrelevant to describe \(s\), it contains all information necessary to describe the situation.
+Some states are called terminal because they correspond to state where the game has ended.
+Here, all the states where the player has played \(N\) turns are final or terminal.
+
+The actions the player can choose are \textit{left} and \textit{right}.
+If the player applies \textit{left}  to \(s\) then, we will obtain a new state \(s'=(7, 11)\).
+The transition from \(s\) to \(s'\) is always the same if we apply \textit{left} to \(s\).
+
+The goal being to obtain the most point as possible, a player will learn to always pick \textit{left}.
+This is called a policy or, more conviniently, a strategy: it dictates the action according to a situation.
+In other, if I give \(s\) to a player following the policy to always go right, he will choose \textit{right} and will go to state \(s''=(6, 11)\).
+
+This simply explains the key concepts of a \gls{mdp}.
+You have states on which you apply actions.
+Applying certain actions on certain states will give you a new state.
+And states have what is called a reward, which is the number of point the player scored.
+
+\subsubsection{Definition}%
+\label{ssub:definition}
+
+Now for a more formal definition, a \gls{mdp} is composed of:
+
+\begin{itemize}
+    \item \(S\) a set of state.
+    \item \(A\) a set of actions
+        \begin{itemize}
+            \item \(A_{s} \subseteq A\) are the legal actions or actions that can be applied to \(s\)
+            \item If \(A_{s} = \emptyset\) then it means that \(s\) is a final or terminal state
+        \end{itemize}
+    \item \(P_{a}(s, s') = P(s_{t+1} = s' | s_{t} = s, a_{t} = a)\) is the probability that when applying action \(a\) to state \(s\), we obtain state \(s'\)
+    \item \(R_{a}(s, s')\) is the reward obtained when transitioning from \(s\) to \(s'\) by applying action \(a\)
+\end{itemize}
+
+When optimizing a \gls{mdp}, we search for the best policy, that means the policy that will give the best expected reward possible.
+A policy \(\pi(s)\) is a distribution of probability over all the elements of \(A_s\).
+A policy that maximizes the reward is called an optimal policy and is often noted \(\pi^{*}\).
+
+A \gls{mdp} represents a stochastic game if the probabilities given by \(P_{a}(s, s')\) are not equal to 1.
+That is to say, if the transitions between the states are uncertain, therefore random, the modelized problem is stochastic.
+

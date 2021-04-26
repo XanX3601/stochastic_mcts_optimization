@@ -1,0 +1,27 @@
+\subsection{\acrshort{nrpa} playout}%
+\label{sub:nrpa_playout}
+
+A \gls{nrpa} playout is used to generate and evaluate a sequence of actions.
+So a sequence \(S={a1, a2, a3, \dots}\) is a list of actions that lead from the root state to a terminal one.
+To \(S\), we can attach a score equal to the sum of rewards obtained by applying it to the root state.
+As the problem is not stochastic, therefore, \(S\) can be apply any number of time and will always give the same resuls.
+
+The algorithm in charge of the rollout is given in algorithm~\ref{alg:nrpa_playout}.
+The algorithm first initialize the sequence it's going to create (line 2).
+Then if it reaches a terminal state, it returns the sequence alongside the score obtained.
+Otherwise, it repeats the following.
+It sums the exponential of the weights attached to each legal actions for the current state (line 8-10).
+Then it samples a move among the legal ones according to the exponential of the weight divided by the sum it just computed.
+This basically means that, a move attached to a big weight will more likely be picked.
+It then plays the chosen action and update the sequence by adding the move at the end.
+
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{.7\linewidth}
+        \subimport{../../../algorithms/nrpa/}{playout.tex}
+    \end{minipage}
+\end{figure}
+
+
+
+
