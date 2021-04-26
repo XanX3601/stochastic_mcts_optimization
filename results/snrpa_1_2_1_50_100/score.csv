@@ -1,2 +1,0 @@
-run_index;run_time;lowest_reward;reward;highest_reward;action_count;team_action_count;sequence_file_path
-0;1831.042782058;-5619;-2796;-2640;34;17;../results/snrpa_1_2_1_50_100//solve0_sequences
